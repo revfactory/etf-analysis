@@ -5,254 +5,180 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="코스닥 ETF Top 3 (KODEX·TIGER·RISE 코스닥150) 포트폴리오 및 피투자사 비중 변화 분석 리포트 (기준일 2026-04-14)" />
   <title>코스닥 ETF Top 3 포트폴리오 분석 · 2026-04-14</title>
-
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" />
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
-
   <style>
     :root {
-      --bg: #0B0F1A;
-      --surface: #111827;
-      --surface-alt: #1F2937;
-      --border: rgba(255,255,255,0.08);
-      --text: #E5E7EB;
-      --text-soft: #9CA3AF;
+      --bg: #0B0F1A; --surface: #111827; --surface-alt: #1F2937;
+      --border: rgba(255,255,255,0.08); --text: #E5E7EB; --text-soft: #9CA3AF;
       --heading: #4F8CFF;
-      --brand-navy: #0B3D91;
-      --brand-blue: #4F8CFF;
-      --brand-emerald: #10B981;
-      --brand-amber: #F5A524;
-      --brand-mint: #7EE8CF;
-      --brand-coral: #FF6B6B;
-      --etf1: #4F8CFF;   /* KODEX */
-      --etf2: #7EE8CF;   /* TIGER */
-      --etf3: #F5A524;   /* RISE  */
-      --cat-in: #10B981;
-      --cat-out: #FF6B6B;
-      --cat-hold: #9CA3AF;
+      --brand-navy: #0B3D91; --brand-blue: #4F8CFF; --brand-emerald: #10B981;
+      --brand-amber: #F5A524; --brand-mint: #7EE8CF; --brand-coral: #FF6B6B;
+      --etf1: #4F8CFF; --etf2: #7EE8CF; --etf3: #F5A524;
+      --cat-in: #10B981; --cat-out: #FF6B6B; --cat-new: #7EE8CF; --cat-hold: #9CA3AF;
       --ease: cubic-bezier(0.22, 1, 0.36, 1);
       --radius: 16px;
       --shadow-1: 0 1px 2px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.25);
       --shadow-2: 0 8px 32px rgba(0,0,0,0.4);
       --content-max: 1200px;
     }
-
     [data-theme="light"] {
-      --bg: #FAFAFB;
-      --surface: #FFFFFF;
-      --surface-alt: #F3F4F6;
-      --border: #E5E7EB;
-      --text: #0F172A;
-      --text-soft: #64748B;
+      --bg: #FAFAFB; --surface: #FFFFFF; --surface-alt: #F3F4F6;
+      --border: #E5E7EB; --text: #0F172A; --text-soft: #64748B;
       --heading: #0B3D91;
       --shadow-1: 0 1px 2px rgba(15,23,42,0.06), 0 4px 16px rgba(15,23,42,0.08);
       --shadow-2: 0 8px 32px rgba(15,23,42,0.12);
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      line-height: 1.6;
-      word-break: keep-all;
-    }
-
+    body { font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; -webkit-font-smoothing: antialiased; line-height: 1.6; word-break: keep-all; }
     a { color: inherit; text-decoration: none; }
     button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
-
     #bg-canvas { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
-
     .container { max-width: var(--content-max); margin: 0 auto; padding: 0 24px; }
 
-    /* ========== NAV ========== */
-    nav.topbar {
-      position: sticky; top: 0; z-index: 50;
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      background: color-mix(in srgb, var(--bg) 72%, transparent);
-      border-bottom: 1px solid var(--border);
-    }
+    /* NAV */
+    nav.topbar { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); background: color-mix(in srgb, var(--bg) 72%, transparent); border-bottom: 1px solid var(--border); }
     .topbar-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
     .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; }
-    .brand-mark {
-      width: 28px; height: 28px; border-radius: 8px;
-      background: linear-gradient(135deg, var(--brand-blue), var(--brand-mint) 60%, var(--brand-amber));
-    }
+    .brand-mark { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, var(--brand-blue), var(--brand-mint) 60%, var(--brand-amber)); }
     .nav-links { display: flex; gap: 22px; font-size: 14px; color: var(--text-soft); }
     .nav-links a:hover { color: var(--text); }
     .nav-actions { display: flex; gap: 8px; align-items: center; }
-    .icon-btn {
-      width: 40px; height: 40px; border-radius: 10px;
-      display: inline-flex; align-items: center; justify-content: center;
-      border: 1px solid var(--border);
-      transition: background 200ms var(--ease), transform 200ms var(--ease);
-    }
+    .icon-btn { width: 40px; height: 40px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--border); transition: background 200ms var(--ease), transform 200ms var(--ease); }
     .icon-btn:hover { background: var(--surface-alt); transform: translateY(-1px); }
     @media (max-width: 900px) { .nav-links { display: none; } }
 
-    /* ========== HERO ========== */
+    /* HERO */
     .hero { padding: 80px 0 56px; position: relative; }
-    .hero-eyebrow {
-      display: inline-block;
-      font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--brand-blue); font-weight: 600;
-      padding: 6px 12px; border: 1px solid var(--border); border-radius: 999px;
-      background: color-mix(in srgb, var(--brand-blue) 10%, transparent);
-    }
-    .hero h1 {
-      font-size: clamp(32px, 5vw, 56px);
-      line-height: 1.15; font-weight: 800; letter-spacing: -0.02em;
-      margin-top: 16px;
-      background: linear-gradient(135deg, var(--text) 10%, var(--brand-blue) 60%, var(--brand-mint) 100%);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-    }
+    .hero-eyebrow { display: inline-block; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand-blue); font-weight: 600; padding: 6px 12px; border: 1px solid var(--border); border-radius: 999px; background: color-mix(in srgb, var(--brand-blue) 10%, transparent); }
+    .hero h1 { font-size: clamp(32px, 5vw, 56px); line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; margin-top: 16px; background: linear-gradient(135deg, var(--text) 10%, var(--brand-blue) 60%, var(--brand-mint) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
     .hero p.lead { margin-top: 20px; max-width: 760px; font-size: clamp(16px, 1.6vw, 19px); color: var(--text-soft); }
     .hero-meta { margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap; color: var(--text-soft); font-size: 14px; }
-
-    .kpi-grid { margin-top: 48px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .kpi-grid { margin-top: 48px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
     @media (max-width: 900px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
-    .kpi-card {
-      border: 1px solid var(--border);
-      background: color-mix(in srgb, var(--surface) 85%, transparent);
-      backdrop-filter: blur(8px);
-      border-radius: var(--radius);
-      padding: 20px 22px;
-      transition: transform 200ms var(--ease), border-color 200ms var(--ease);
-    }
+    @media (max-width: 560px) { .kpi-grid { grid-template-columns: 1fr; } }
+    .kpi-card { border: 1px solid var(--border); background: color-mix(in srgb, var(--surface) 85%, transparent); backdrop-filter: blur(8px); border-radius: var(--radius); padding: 18px 22px; transition: transform 200ms var(--ease), border-color 200ms var(--ease); }
     .kpi-card:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--brand-blue) 40%, var(--border)); }
     .kpi-label { font-size: 12px; color: var(--text-soft); letter-spacing: 0.04em; text-transform: uppercase; }
-    .kpi-value { font-size: 30px; font-weight: 700; margin-top: 6px; letter-spacing: -0.01em; font-feature-settings: "tnum" 1; }
+    .kpi-value { font-size: 28px; font-weight: 700; margin-top: 6px; letter-spacing: -0.01em; font-feature-settings: "tnum" 1; display: flex; align-items: baseline; gap: 4px; }
+    .kpi-unit { font-size: 14px; color: var(--text-soft); font-weight: 500; }
+    .kpi-delta-pos { color: var(--cat-in); margin-right: 4px; }
     .kpi-sub { font-size: 12px; color: var(--text-soft); margin-top: 4px; }
 
-    /* ========== SECTION ========== */
+    /* SECTION */
     section.block { padding: 72px 0; }
     .section-head { margin-bottom: 32px; }
     .section-kicker { font-size: 13px; color: var(--brand-blue); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; }
     .section-title { font-size: clamp(24px, 3vw, 36px); font-weight: 700; margin-top: 8px; letter-spacing: -0.01em; }
     .section-sub { color: var(--text-soft); margin-top: 8px; max-width: 760px; }
 
-    /* ========== ETF TAB ========== */
+    /* ETF TABS */
     .etf-tabs { display: inline-flex; padding: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; gap: 2px; flex-wrap: wrap; }
-    .etf-tab {
-      padding: 8px 18px; border-radius: 999px; font-size: 14px; font-weight: 600;
-      color: var(--text-soft); transition: all 200ms var(--ease);
-    }
-    .etf-tab[aria-selected="true"] { background: var(--tab-active-color, var(--brand-blue)); color: #fff; }
+    .etf-tab { padding: 8px 18px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--text-soft); transition: all 200ms var(--ease); }
+    .etf-tab:hover:not([aria-selected="true"]) { color: var(--text); }
     .etf-tab[data-etf="KODEX"][aria-selected="true"] { background: var(--etf1); color: #0B0F1A; }
     .etf-tab[data-etf="TIGER"][aria-selected="true"] { background: var(--etf2); color: #0B0F1A; }
     .etf-tab[data-etf="RISE"][aria-selected="true"]  { background: var(--etf3); color: #0B0F1A; }
-    .etf-tab:hover:not([aria-selected="true"]) { color: var(--text); }
 
-    .etf-card {
-      border: 1px solid var(--border);
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 28px;
-      box-shadow: var(--shadow-1);
-      margin-top: 24px;
-    }
+    .etf-card { border: 1px solid var(--border); background: var(--surface); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow-1); margin-top: 24px; }
     .etf-card-head { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; }
     .etf-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; }
     .etf-name { font-size: 22px; margin-top: 8px; font-weight: 700; letter-spacing: -0.01em; }
     .etf-manager { color: var(--text-soft); font-size: 14px; margin-top: 4px; }
+    .etf-tagline { display: inline-block; margin-top: 10px; padding: 4px 10px; font-size: 12px; font-weight: 600; border-radius: 6px; background: color-mix(in srgb, var(--brand-mint) 12%, transparent); color: var(--brand-mint); }
     .etf-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 22px; }
     @media (max-width: 700px) { .etf-stat-grid { grid-template-columns: repeat(2, 1fr); } }
     .etf-stat-label { font-size: 12px; color: var(--text-soft); }
     .etf-stat-value { font-size: 20px; font-weight: 700; margin-top: 4px; font-feature-settings: "tnum" 1; }
 
-    /* ========== CHART BOX ========== */
-    .chart-box {
-      border: 1px solid var(--border);
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 24px;
-      box-shadow: var(--shadow-1);
-    }
+    /* CHART */
+    .chart-box { border: 1px solid var(--border); background: var(--surface); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow-1); }
     .chart-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.005em; }
     .chart-sub { font-size: 13px; color: var(--text-soft); margin-bottom: 16px; }
     .chart-canvas { width: 100%; height: 440px; border-radius: 12px; }
     .chart-canvas.compact { height: 340px; }
     .chart-caption { margin-top: 12px; font-size: 12px; color: var(--text-soft); font-style: italic; }
+    .chart-notes { margin-top: 6px; font-size: 11px; color: var(--text-soft); }
+    .chart-notes li { list-style: "— " inside; }
     .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     @media (max-width: 900px) { .chart-grid { grid-template-columns: 1fr; } }
 
-    /* ========== HOLDINGS GRID ========== */
+    /* HOLDINGS GRID */
     .holdings-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
     @media (max-width: 1024px) { .holdings-grid { grid-template-columns: repeat(3, 1fr); } }
     @media (max-width: 768px)  { .holdings-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 480px)  { .holdings-grid { grid-template-columns: 1fr; } }
-
-    .holding-card {
-      border: 1px solid var(--border);
-      background: var(--surface);
-      border-radius: 12px;
-      padding: 14px 16px;
-      transition: transform 160ms var(--ease), box-shadow 200ms var(--ease), border-color 200ms var(--ease);
-      position: relative;
-    }
-    .holding-card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-2);
-      border-color: color-mix(in srgb, var(--brand-blue) 40%, var(--border));
-    }
+    .holding-card { border: 1px solid var(--border); background: var(--surface); border-radius: 12px; padding: 14px 16px; transition: transform 160ms var(--ease), box-shadow 200ms var(--ease), border-color 200ms var(--ease); position: relative; }
+    .holding-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); border-color: color-mix(in srgb, var(--brand-blue) 40%, var(--border)); }
     .holding-rank { font-size: 11px; color: var(--text-soft); font-feature-settings: "tnum" 1; }
     .holding-name { font-size: 15px; font-weight: 700; margin-top: 2px; }
     .holding-sector { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
     .holding-meta { margin-top: 10px; display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; }
     .holding-weight { font-weight: 700; letter-spacing: -0.01em; font-size: 17px; font-feature-settings: "tnum" 1; }
+    .est-badge { font-size: 10px; color: var(--text-soft); font-weight: 500; margin-left: 4px; }
     .na-pill { color: var(--text-soft); font-size: 11px; padding: 2px 8px; border-radius: 999px; background: color-mix(in srgb, var(--text-soft) 18%, transparent); }
 
-    /* ========== INSIGHTS ========== */
+    /* TABLE */
+    .holdings-table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--surface); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); margin-top: 24px; }
+    .holdings-table th, .holdings-table td { padding: 10px 12px; text-align: right; border-bottom: 1px solid var(--border); font-feature-settings: "tnum" 1; }
+    .holdings-table th { background: var(--surface-alt); font-weight: 700; font-size: 12px; letter-spacing: 0.02em; color: var(--text-soft); text-transform: uppercase; }
+    .holdings-table th:nth-child(1), .holdings-table th:nth-child(2), .holdings-table th:nth-child(3),
+    .holdings-table td:nth-child(1), .holdings-table td:nth-child(2), .holdings-table td:nth-child(3) { text-align: left; }
+    .holdings-table tr:last-child td { border-bottom: none; }
+    .holdings-table tr.highlight-row { border-left: 3px solid var(--brand-coral); background: color-mix(in srgb, var(--brand-coral) 6%, transparent); }
+    .holdings-table tr.highlight-row td:first-child { font-weight: 700; }
+    .na-cell { color: var(--text-soft); }
+
+    /* INSIGHTS */
     .insight-list { display: grid; gap: 16px; }
-    .insight-item {
-      border-left: 3px solid var(--brand-blue);
-      padding: 22px 26px;
-      background: var(--surface);
-      border-radius: 0 12px 12px 0;
-      border-top: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-    .insight-num { font-size: 12px; color: var(--brand-blue); font-weight: 700; letter-spacing: 0.1em; }
+    .insight-item { border-left: 3px solid var(--insight-color, var(--brand-blue)); padding: 22px 26px; background: var(--surface); border-radius: 0 12px 12px 0; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .insight-num { font-size: 12px; color: var(--insight-color, var(--brand-blue)); font-weight: 700; letter-spacing: 0.1em; }
     .insight-title { font-size: 19px; font-weight: 700; margin-top: 4px; letter-spacing: -0.01em; }
-    .insight-body { color: var(--text-soft); margin-top: 10px; font-size: 15px; }
-    .insight-quant { margin-top: 12px; padding: 12px 14px; background: color-mix(in srgb, var(--brand-blue) 6%, transparent); border-radius: 8px; font-size: 14px; }
-    .insight-context { margin-top: 8px; font-size: 13px; color: var(--text-soft); font-style: italic; }
+    .insight-tagline { color: var(--text-soft); margin-top: 6px; font-size: 14px; }
+    .insight-severity { display: inline-block; margin-left: 10px; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .sev-high   { color: var(--brand-coral);   background: color-mix(in srgb, var(--brand-coral) 18%, transparent); }
+    .sev-medium { color: var(--brand-amber);   background: color-mix(in srgb, var(--brand-amber) 18%, transparent); }
+    .sev-low    { color: var(--brand-mint);    background: color-mix(in srgb, var(--brand-mint) 18%, transparent); }
+    .insight-block { margin-top: 14px; padding: 12px 14px; border-radius: 8px; }
+    .insight-block.quant { background: color-mix(in srgb, var(--brand-blue) 6%, transparent); border-left: 2px solid var(--brand-blue); }
+    .insight-block.context { background: color-mix(in srgb, var(--brand-amber) 5%, transparent); border-left: 2px dashed var(--brand-amber); }
+    .insight-block-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 6px; }
+    .insight-block.quant .insight-block-label { color: var(--brand-blue); }
+    .insight-block.context .insight-block-label { color: var(--brand-amber); }
+    .insight-block ul { list-style: none; }
+    .insight-block li { padding: 4px 0; font-size: 14px; line-height: 1.5; }
+    .insight-block li::before { content: "·"; color: var(--text-soft); margin-right: 8px; }
     .hyp-tag { display: inline-block; padding: 1px 6px; border-radius: 4px; background: color-mix(in srgb, var(--brand-amber) 20%, transparent); color: var(--brand-amber); font-weight: 600; font-size: 11px; margin-right: 4px; }
 
-    /* ========== LIMITATIONS ========== */
-    .limit-list { display: grid; gap: 10px; }
-    .limit-item {
-      padding: 14px 18px;
-      border: 1px dashed var(--border);
-      border-radius: 10px;
-      font-size: 14px;
-      color: var(--text-soft);
-      background: color-mix(in srgb, var(--surface) 40%, transparent);
-    }
-    .limit-item strong { color: var(--text); font-weight: 700; }
+    /* REBALANCE */
+    .rebalance-row { display: flex; justify-content: space-between; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 14px; }
+    .rebalance-row:last-child { border-bottom: none; }
 
-    /* ========== SOURCES ========== */
-    .sources-table {
-      width: 100%; border-collapse: collapse; font-size: 13px;
-      background: var(--surface); border-radius: var(--radius); overflow: hidden;
-      border: 1px solid var(--border);
-    }
+    /* CONTEXT */
+    .context-card { border: 1px solid var(--border); background: var(--surface); border-radius: var(--radius); padding: 24px; }
+    .context-card h3 { font-size: 18px; margin-bottom: 12px; }
+    .context-card .theme-item { padding: 10px 14px; margin: 8px 0; border-left: 2px solid var(--brand-mint); font-size: 14px; color: var(--text-soft); background: color-mix(in srgb, var(--brand-mint) 5%, transparent); border-radius: 0 8px 8px 0; }
+    .disclaimer-box { margin-top: 12px; padding: 10px 14px; font-size: 12px; color: var(--brand-coral); background: color-mix(in srgb, var(--brand-coral) 8%, transparent); border-radius: 8px; border: 1px dashed var(--brand-coral); }
+
+    /* LIMITATIONS */
+    .limit-list { display: grid; gap: 10px; }
+    .limit-item { padding: 14px 18px; border: 1px dashed var(--border); border-radius: 10px; font-size: 14px; color: var(--text-soft); background: color-mix(in srgb, var(--surface) 40%, transparent); }
+
+    /* SOURCES */
+    .sources-table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--surface); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
     .sources-table th, .sources-table td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
     .sources-table th { background: var(--surface-alt); font-weight: 700; font-size: 12px; letter-spacing: 0.02em; color: var(--text-soft); text-transform: uppercase; }
     .sources-table tr:last-child td { border-bottom: none; }
     .grade-A { color: var(--cat-in); font-weight: 700; }
     .grade-B { color: var(--brand-amber); font-weight: 700; }
 
-    /* ========== FOOTER ========== */
+    /* FOOTER */
     footer { border-top: 1px solid var(--border); margin-top: 48px; padding: 32px 0 56px; color: var(--text-soft); font-size: 13px; }
     .footer-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
 
-    /* ========== REVEAL ========== */
+    /* REVEAL */
     .reveal { opacity: 0; transform: translateY(16px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); }
     .reveal.in { opacity: 1; transform: none; }
 
@@ -268,17 +194,15 @@
 
   <nav class="topbar" aria-label="상단 내비게이션">
     <div class="container topbar-inner">
-      <div class="brand">
-        <span class="brand-mark" aria-hidden="true"></span>
-        <span>KOSDAQ ETF Report</span>
-      </div>
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>KOSDAQ ETF Report</span></div>
       <div class="nav-links">
         <a href="#overview">개요</a>
         <a href="#etfs">ETF</a>
-        <a href="#holdings">상위 10</a>
+        <a href="#holdings">홀딩스</a>
         <a href="#changes">비중 변화</a>
         <a href="#rebalance">정기변경</a>
         <a href="#insights">인사이트</a>
+        <a href="#context">맥락</a>
         <a href="#limitations">한계</a>
       </div>
       <div class="nav-actions">
@@ -296,40 +220,15 @@
     <!-- HERO -->
     <section class="hero container" id="overview">
       <span class="hero-eyebrow">2026-04-14 · 분기 스냅샷</span>
-      <h1>코스닥 ETF Top 3<br/>피투자사 포트폴리오 분석</h1>
-      <p class="lead">
-        KODEX · TIGER · RISE 코스닥150 — 국내 코스닥150 지수를 추종하는 순자산(AUM) 상위 3개 ETF의 피투자사 구성,
-        최근 6개월 비중 변화, 2025-12-12 지수 정기변경, 섹터 집중도를 투명하게 정리합니다.
-      </p>
+      <h1>코스닥 ETF Top 3<br/>한 눈에</h1>
+      <p class="lead">KODEX · TIGER · RISE 코스닥150 — 2026-04-14 기준, AUM 합계 약 9,114억 원, 상위 10 종목 중 공통 편입 8종. 최근 6개월 비중 변화·지수 정기변경·섹터 집중도를 투명하게 정리합니다.</p>
       <div class="hero-meta">
         <span>기준일 <strong>2026-04-14</strong></span>
         <span>비교 시점 <strong>2025-10-14 · 2026-01-14 · 2026-04-14</strong></span>
         <span>선정 기준 <strong>순자산(AUM)</strong></span>
         <span>제외 <strong>레버리지·인버스</strong></span>
       </div>
-
-      <div class="kpi-grid">
-        <div class="kpi-card reveal">
-          <div class="kpi-label">Top 3 합산 AUM</div>
-          <div class="kpi-value">9,114<span style="font-size:16px;color:var(--text-soft);font-weight:500;"> 억원</span></div>
-          <div class="kpi-sub">2026-04-13 기준 · KODEX 6,518 / TIGER 2,115 / RISE 482</div>
-        </div>
-        <div class="kpi-card reveal">
-          <div class="kpi-label">분석 대상 ETF</div>
-          <div class="kpi-value">3</div>
-          <div class="kpi-sub">모두 코스닥150 지수 추종</div>
-        </div>
-        <div class="kpi-card reveal">
-          <div class="kpi-label">공통 편입 Top10 종목</div>
-          <div class="kpi-value">8</div>
-          <div class="kpi-sub">3개 ETF 모두 보유 · 단독 편입 없음</div>
-        </div>
-        <div class="kpi-card reveal">
-          <div class="kpi-label">최대 비중 스프레드</div>
-          <div class="kpi-value">3.51<span style="font-size:16px;color:var(--text-soft);font-weight:500;">%p</span></div>
-          <div class="kpi-sub">알테오젠 · KODEX 10.49 vs RISE 6.99</div>
-        </div>
-      </div>
+      <div class="kpi-grid" id="kpi-grid"></div>
     </section>
 
     <!-- ETF PROFILES -->
@@ -346,35 +245,14 @@
         <button role="tab" class="etf-tab" data-etf="RISE"  aria-selected="false">RISE 코스닥150</button>
       </div>
 
-      <div class="etf-card reveal" id="etf-detail-card">
-        <div class="etf-card-head">
-          <div>
-            <div class="etf-badge" id="etf-badge">KODEX</div>
-            <h3 class="etf-name" id="etf-name">KODEX 코스닥150</h3>
-            <p class="etf-manager" id="etf-manager">삼성자산운용 · 코스닥150 추종</p>
-          </div>
-          <div style="text-align: right;">
-            <div class="kpi-label">상장일</div>
-            <div class="etf-stat-value" id="etf-listed">2015-10-01</div>
-          </div>
-        </div>
-        <div class="etf-stat-grid">
-          <div><div class="etf-stat-label">AUM (억원)</div><div class="etf-stat-value" id="etf-aum">6,517.6</div></div>
-          <div><div class="etf-stat-label">총보수 (%)</div><div class="etf-stat-value" id="etf-fee">0.25</div></div>
-          <div><div class="etf-stat-label">Top10 집중도</div><div class="etf-stat-value" id="etf-top10">36.93%</div></div>
-          <div><div class="etf-stat-label">Effective N</div><div class="etf-stat-value" id="etf-effn">6.18</div></div>
-        </div>
-        <p style="margin-top:14px; font-size:13px; color:var(--text-soft);" id="etf-note">
-          KODEX 공개 상위 8종목 합. 알테오젠(196170) 단일 종목이 10.49%로 최대.
-        </p>
-      </div>
+      <div class="etf-card reveal" id="etf-detail-card"></div>
 
       <div style="margin-top: 28px;">
         <div class="chart-box reveal">
           <div class="chart-title">코스닥 ETF Top 3 AUM 비교</div>
-          <div class="chart-sub">순자산 규모(억원) · 2026-04-13 기준</div>
+          <div class="chart-sub">기준일 2026-04-13 · KODEX 단독이 TIGER+RISE 합보다 약 2.5배 크다</div>
           <div id="chart-aum" class="chart-canvas compact"></div>
-          <div class="chart-caption">자료: FunETF · 운용사 공식 PDP, 기준일: 2026-04-13</div>
+          <div class="chart-caption">자료: 한국거래소·삼성/미래에셋/KB자산운용 PDP·언론 교차 인용, 기준일: 2026-04-13</div>
         </div>
       </div>
 
@@ -387,7 +265,7 @@
         </div>
         <div class="chart-box reveal">
           <div class="chart-title">집중도 지표 요약</div>
-          <div class="chart-sub">Top10 집중도 · HHI · Effective N</div>
+          <div class="chart-sub">Top10 집중도(%) · Effective N · HHI(이중 축)</div>
           <div id="chart-concentration" class="chart-canvas compact"></div>
           <div class="chart-caption">자료: portfolio-analysis v1, 기준일: 2026-04-14</div>
         </div>
@@ -399,22 +277,32 @@
       <div class="section-head reveal">
         <div class="section-kicker">상위 10 종목</div>
         <h2 class="section-title">ETF별 상위 10 종목 비중 비교 (2026-04-14)</h2>
-        <p class="section-sub">같은 지수, 다른 숫자 — 알테오젠 3.51%p 스프레드에 주목하세요. 3개 ETF 공통 편입 8종, 단독 편입 0건.</p>
+        <p class="section-sub">같은 지수, 다른 숫자 — 알테오젠 3.51%p 스프레드에 주목. 3개 ETF 공통 편입 8종, 단독 편입 0건.</p>
       </div>
 
       <div class="chart-box reveal" style="margin-bottom: 28px;">
         <div class="chart-title">ETF별 상위 10 종목 비중 비교</div>
-        <div class="chart-sub">수평 그룹 막대 · 색은 ETF 시리즈 · null은 해당 ETF 공개 범위 밖</div>
+        <div class="chart-sub">수평 그룹 막대 · 색은 ETF 시리즈 · null은 해당 ETF 공개 범위 밖(—)</div>
         <div id="chart-top10" class="chart-canvas" style="height: 520px;"></div>
-        <div class="chart-caption">자료: 각 운용사 공식 PDP · 언론 교차 확인. TIGER는 지수 기반 추정치 ±0.2%p 오차. 기준일: 2026-04-14</div>
+        <ul class="chart-notes">
+          <li>KODEX 삼천당제약·리노공업은 공개 상위 8종 범위 밖(실제 지수에는 포함)</li>
+          <li>TIGER 수치는 지수 기반 추정치 ±0.2%p 오차 가능</li>
+        </ul>
+        <div class="chart-caption">자료: 한국거래소·삼성/미래에셋/KB자산운용 PDP·언론 교차 인용, 기준일: 2026-04-14</div>
       </div>
 
-      <h3 style="font-size:18px; margin: 12px 0 12px;">상위 10 종목 카드 — <span id="holding-etf-label" style="color:var(--etf1);">KODEX</span></h3>
+      <h3 style="font-size:18px; margin: 12px 0 12px;">상위 10 종목 카드 — <span id="holding-etf-label" style="color:var(--etf1);">KODEX 코스닥150</span></h3>
       <div class="holdings-grid" id="holdings-grid"></div>
+
+      <h3 style="font-size:18px; margin: 32px 0 8px;">통합 홀딩스 테이블 (스프레드 ≥ 1%p 강조)</h3>
+      <p style="color:var(--text-soft); font-size:13px; margin-bottom:4px;">3-ETF 평균·스프레드 포함. 스프레드 ≥ 1%p 행은 coral 좌측 인디케이터.</p>
+      <div style="overflow-x:auto;">
+        <table class="holdings-table" id="holdings-table"></table>
+      </div>
 
       <div class="chart-box reveal" style="margin-top: 28px;">
         <div class="chart-title">공통 종목 ETF 간 비중 스프레드 (max − min, %p)</div>
-        <div class="chart-sub">동일 지수·동일 티커라도 숫자는 다르다 · 붉은 선은 유의 스프레드(≥1%p)</div>
+        <div class="chart-sub">동일 지수·동일 티커라도 숫자는 다르다 · 붉은 점선은 유의 스프레드(≥1%p)</div>
         <div id="chart-spread" class="chart-canvas"></div>
         <div class="chart-caption">자료: portfolio-analysis v1, 기준일: 2026-04-14</div>
       </div>
@@ -424,29 +312,30 @@
     <section class="block container" id="changes">
       <div class="section-head reveal">
         <div class="section-kicker">비중 변화</div>
-        <h2 class="section-title">알테오젠(196170) 비중 시계열 — KODEX 코스닥150</h2>
+        <h2 class="section-title">주요 종목 비중 시계열 (2025-10-14 ~ 2026-04-14)</h2>
         <p class="section-sub">6개월간 +2.99%p 상승 후 최근 3개월 −0.51%p 소폭 조정. 2025-12-08 코스피 이전 의결이 전환점으로 해석됩니다 <span class="hyp-tag">가설</span>.</p>
       </div>
 
       <div class="chart-box reveal">
-        <div class="chart-title">알테오젠 KODEX 비중 시계열 (단일 시리즈)</div>
-        <div class="chart-sub">알테오젠 외 종목은 시점별 원천 비중 데이터 미확보로 시계열 라인 불가</div>
+        <div class="chart-title">알테오젠 (KODEX 기준) 비중 시계열 — 단일 시리즈</div>
+        <div class="chart-sub">시점별 원천 데이터 제약으로 유효 시리즈는 알테오젠 1건</div>
         <div id="chart-timeseries" class="chart-canvas"></div>
         <div class="chart-caption">자료: 2025-07-31 KODEX 월간보고서 · 2026-Q1 언론 인용치 교차 확인, 기준일: 2026-04-14</div>
+        <ul class="chart-notes" id="placeholder-series"></ul>
       </div>
 
       <div class="chart-grid" style="margin-top:20px;">
         <div class="chart-box reveal">
-          <div class="chart-title">KODEX 비중 변화 분류</div>
-          <div class="chart-sub">시계열 확보 종목 기준 · 분류 가능 1건, 분류 불가 7건</div>
+          <div class="chart-title">정량 분류 가능 종목 분포</div>
+          <div class="chart-sub">알테오젠 시계열 1건 + 정기변경 편입·편출 + N/A</div>
           <div id="chart-classification" class="chart-canvas compact"></div>
-          <div class="chart-caption">자료: portfolio-analysis v1 · 시점별 개별 비중 원천 제약. 기준일: 2026-04-14</div>
+          <div class="chart-caption">자료: portfolio-analysis v1 + 2025-12-12 지수 정기변경. 기준일: 2026-04-14</div>
         </div>
         <div class="chart-box reveal">
           <div class="chart-title">ETF × 섹터 비중 히트맵</div>
           <div class="chart-sub">상위 공개 종목 기준 · 값은 비중(%)</div>
           <div id="chart-heatmap" class="chart-canvas compact"></div>
-          <div class="chart-caption">자료: portfolio-analysis v1. KODEX 반도체장비 0.00은 공개 상위 8종 범위 밖(실제 지수에는 포함)</div>
+          <div class="chart-caption">자료: portfolio-analysis v1. KODEX 반도체장비는 공개 상위 8종 범위 밖(실제 지수에는 포함)</div>
         </div>
       </div>
     </section>
@@ -457,6 +346,13 @@
         <div class="section-kicker">정기변경</div>
         <h2 class="section-title">2025-12-12 코스닥150 정기변경 — 16 편입 / 16 편출</h2>
         <p class="section-sub">3개 ETF 모두 동일 적용. 로봇·바이오 편입, 반도체 부품·소비재 편출 — 지수의 섹터 주연이 바뀌고 있습니다.</p>
+      </div>
+
+      <div class="chart-box reveal" style="margin-bottom: 28px;">
+        <div class="chart-title">섹터별 편입/편출 다이버징 막대</div>
+        <div class="chart-sub">우측 녹색 = 편입 수, 좌측 적색 = 편출 수</div>
+        <div id="chart-inout" class="chart-canvas compact"></div>
+        <div class="chart-caption">자료: 한국거래소 공시, 2025-11-18 발표</div>
       </div>
 
       <div class="chart-grid">
@@ -482,10 +378,22 @@
       <div class="section-head reveal">
         <div class="section-kicker">인사이트</div>
         <h2 class="section-title">핵심 해석 5</h2>
-        <p class="section-sub">정량 근거와 언론·커뮤니티 맥락을 분리해 기술합니다. <span class="hyp-tag">가설</span> 표시는 정량 증명이 아닌 맥락 기반 해석입니다.</p>
+        <p class="section-sub">각 인사이트는 <b>정량 근거(evidence_quant)</b>와 <b>맥락 가설(evidence_context)</b>로 분리됩니다. <span class="hyp-tag">가설</span> 태그는 정량 증명이 아닌 언론·커뮤니티 맥락 기반 해석입니다.</p>
       </div>
-
       <div class="insight-list" id="insights-list"></div>
+    </section>
+
+    <!-- CONTEXT -->
+    <section class="block container" id="context">
+      <div class="section-head reveal">
+        <div class="section-kicker">맥락</div>
+        <h2 class="section-title">언론 보도 · 커뮤니티 반응</h2>
+        <p class="section-sub">수치 해석의 보조 맥락. 인용 가설 제시용이며, 대표성은 보장되지 않습니다.</p>
+      </div>
+      <div class="chart-grid">
+        <div class="context-card reveal" id="context-press"></div>
+        <div class="context-card reveal" id="context-community"></div>
+      </div>
     </section>
 
     <!-- LIMITATIONS -->
@@ -494,13 +402,7 @@
         <div class="section-kicker">데이터 한계</div>
         <h2 class="section-title">해석 시 반드시 함께 봐야 할 사항</h2>
       </div>
-      <div class="limit-list">
-        <div class="limit-item"><strong>시계열 비중 데이터 공백:</strong> 알테오젠(KODEX) 1건을 제외한 모든 종목의 2025-10 · 2026-01 시점 개별 비중이 N/A. "신규/제외/증액/축소" 분류는 알테오젠 1건(증액)만 정량 확정.</div>
-        <div class="limit-item"><strong>TIGER 수치 정확도:</strong> 지수 기반 추정치(±0.2%p 오차 가능). 미래에셋 월간 PDF 원문 접근 실패.</div>
-        <div class="limit-item"><strong>RISE vs KODEX 괴리:</strong> 알테오젠 비중 3.51%p 차이는 표면적 사실이나, 실제 포트폴리오 차이인지 집계 시점·CU 단위 차이인지 단정 불가.</div>
-        <div class="limit-item"><strong>섹터 분류:</strong> 공식 분류가 아닌 본 분석의 실무 분류. GICS·거래소 업종 적용 시 HHI가 달라질 수 있음.</div>
-        <div class="limit-item"><strong>커뮤니티 대표성:</strong> 공개 언론에 인용된 발화만 수집. 인용된 발화는 표본 일부에 지나지 않으며 전체 투자자 의견 대표성은 보장되지 않음.</div>
-      </div>
+      <div class="limit-list" id="limit-list"></div>
     </section>
 
     <!-- SOURCES -->
@@ -511,9 +413,7 @@
         <p class="section-sub">A 등급 = 운용사·거래소 공식 / B 등급 = 언론·리서치 인용</p>
       </div>
       <table class="sources-table">
-        <thead>
-          <tr><th>데이터 항목</th><th>출처</th><th>등급</th><th>접근일</th></tr>
-        </thead>
+        <thead><tr><th>데이터 항목</th><th>출처</th><th>등급</th><th>접근일</th></tr></thead>
         <tbody id="sources-tbody"></tbody>
       </table>
     </section>
@@ -525,179 +425,246 @@
         <div>© 2026 KOSDAQ ETF Report · 기준일 2026-04-14</div>
         <div style="margin-top: 6px;">본 자료는 투자 권유가 아닌 정보 제공 목적이며, 매매 판단은 투자자 본인의 책임입니다.</div>
       </div>
-      <div>
-        <a href="./report.pdf">PDF 다운로드 →</a>
-      </div>
+      <div><a href="./report.pdf">PDF 다운로드 →</a></div>
     </div>
   </footer>
 
   <script>
-  // ====================================================================
-  // DATA (도착된 02_charts_spec.json · 01_holdings_*.json · 02_analysis.json · 02_insights.md 기반)
-  // ====================================================================
+  // ==================== TOKENS (from 98_design_tokens.json v0.2.0) ====================
   const TOKENS = {
     etf_series: { KODEX: '#4F8CFF', TIGER: '#7EE8CF', RISE: '#F5A524' },
-    category: { in: '#10B981', out: '#FF6B6B', hold: '#9CA3AF', amber: '#F5A524' },
+    category: { in: '#10B981', out: '#FF6B6B', new: '#7EE8CF', hold: '#9CA3AF', amber: '#F5A524' }
+  };
+  const fmt = {
+    aum(n) { return n == null ? '—' : new Intl.NumberFormat('ko-KR').format(Math.round(n)) + ' 억원'; },
+    pct(n, d=2) { return n == null ? '—' : n.toFixed(d) + '%'; },
+    pp(n, d=2) { if (n == null) return '—'; const s = n > 0 ? '+' : (n < 0 ? '' : ''); return s + n.toFixed(d) + '%p'; },
+    na() { return '—'; }
   };
 
-  const ETFS = [
-    { key: 'KODEX', code: '229200', name: 'KODEX 코스닥150', manager: '삼성자산운용',
-      listed: '2015-10-01', aum: 6517.6, fee: 0.25, top10: 36.93, hhi: 635.9, effn: 6.18,
-      note: 'KODEX 공개 상위 8종목 합. 알테오젠(196170) 단일 종목이 10.49%로 최대.' },
-    { key: 'TIGER', code: '232080', name: 'TIGER 코스닥150', manager: '미래에셋자산운용',
-      listed: '2015-11-12', aum: 2115.1, fee: 0.19, top10: 42.60, hhi: 794.2, effn: 7.66,
-      note: 'TIGER 개별 비중은 지수 기반 추정치 ±0.2%p. 섹터 쏠림(바이오 26.90%)은 3개 중 가장 큼.' },
-    { key: 'RISE',  code: '270810', name: 'RISE 코스닥150',  manager: 'KB자산운용',
-      listed: '2017-06-16', aum: 481.7, fee: 0.02, top10: 39.11, hhi: 574.2, effn: 8.41,
-      note: '총보수 0.02%로 Top3 중 최저. Effective N 8.41로 가장 분산. 구 KBSTAR 코스닥150.' }
+  // ==================== DATA (from 02_charts_spec.json v1.0.0) ====================
+  const KPI_HERO = [
+    {label:'분석 대상 ETF',       value:3,      unit:'',       delta:null, hint:'KODEX · TIGER · RISE'},
+    {label:'Top10 공통 티커',     value:8,      unit:'개',     delta:null, hint:'3개 ETF 상위10 교집합'},
+    {label:'최대 비중 스프레드',   value:3.51,   unit:'%p',     delta:null, hint:'알테오젠 (KODEX 10.49 vs RISE 6.99)'},
+    {label:'알테오젠 6M 비중 변화', value:2.99,  unit:'%p',     delta:'+',  hint:'KODEX 7.50 → 10.49 (6개월)'},
+    {label:'AUM 합계',            value:9114,   unit:'억원',    delta:null, hint:'2026-04-13 기준'},
+    {label:'2025-12-12 정기변경',  value:'16/16', unit:'편입/편출', delta:null, hint:'로봇·바이오 ↑ / 반도체 부품·소비재 ↓'}
   ];
 
-  const HOLDINGS_TOP10 = {
-    KODEX: [
-      {rank:1, ticker:'196170', name:'알테오젠',     sector:'바이오/헬스케어',  weight:10.49},
-      {rank:2, ticker:'086520', name:'에코프로',     sector:'2차전지/소재',    weight:5.70},
-      {rank:3, ticker:'247540', name:'에코프로비엠', sector:'2차전지/양극재',  weight:5.09},
-      {rank:4, ticker:'298380', name:'에이비엘바이오', sector:'바이오/헬스케어', weight:4.60},
-      {rank:5, ticker:'028300', name:'HLB',          sector:'바이오/헬스케어', weight:3.24},
-      {rank:6, ticker:'087010', name:'펩트론',       sector:'바이오/헬스케어', weight:2.95},
-      {rank:7, ticker:'141080', name:'리가켐바이오', sector:'바이오/헬스케어', weight:2.65},
-      {rank:8, ticker:'277810', name:'레인보우로보틱스', sector:'로봇',      weight:2.21},
-      {rank:9, ticker:'058470', name:'리노공업',     sector:'반도체장비',      weight:null, note:'KODEX 공개 상위 8종 범위 밖'},
-      {rank:10,ticker:'000250', name:'삼천당제약',   sector:'바이오/헬스케어', weight:null, note:'KODEX 공개 상위 8종 범위 밖'}
-    ],
-    TIGER: [
-      {rank:1, ticker:'196170', name:'알테오젠',     sector:'바이오/헬스케어', weight:10.5,  est:true},
-      {rank:2, ticker:'086520', name:'에코프로',     sector:'2차전지/소재',   weight:5.7,   est:true},
-      {rank:3, ticker:'247540', name:'에코프로비엠', sector:'2차전지/양극재', weight:5.1,   est:true},
-      {rank:4, ticker:'298380', name:'에이비엘바이오', sector:'바이오/헬스케어', weight:4.6, est:true},
-      {rank:5, ticker:'028300', name:'HLB',          sector:'바이오/헬스케어', weight:3.2, est:true},
-      {rank:6, ticker:'087010', name:'펩트론',       sector:'바이오/헬스케어', weight:3.0, est:true},
-      {rank:7, ticker:'000250', name:'삼천당제약',   sector:'바이오/헬스케어', weight:3.0, est:true},
-      {rank:8, ticker:'058470', name:'리노공업',     sector:'반도체장비',     weight:2.7, est:true},
-      {rank:9, ticker:'141080', name:'리가켐바이오', sector:'바이오/헬스케어', weight:2.6, est:true},
-      {rank:10,ticker:'277810', name:'레인보우로보틱스', sector:'로봇',     weight:2.2, est:true}
-    ],
-    RISE: [
-      {rank:1, ticker:'196170', name:'알테오젠',     sector:'바이오/헬스케어', weight:6.99},
-      {rank:2, ticker:'086520', name:'에코프로',     sector:'2차전지/소재',   weight:6.85},
-      {rank:3, ticker:'247540', name:'에코프로비엠', sector:'2차전지/양극재', weight:5.23},
-      {rank:4, ticker:'000250', name:'삼천당제약',   sector:'바이오/헬스케어', weight:3.56},
-      {rank:5, ticker:'028300', name:'HLB',          sector:'바이오/헬스케어', weight:3.33},
-      {rank:6, ticker:'298380', name:'에이비엘바이오', sector:'바이오/헬스케어', weight:3.11},
-      {rank:7, ticker:'087010', name:'펩트론',       sector:'바이오/헬스케어', weight:2.74},
-      {rank:8, ticker:'058470', name:'리노공업',     sector:'반도체장비',     weight:2.73},
-      {rank:9, ticker:'141080', name:'리가켐바이오', sector:'바이오/헬스케어', weight:2.35},
-      {rank:10,ticker:'277810', name:'레인보우로보틱스', sector:'로봇',     weight:2.22}
+  const ETFS = [
+    { key:'KODEX', code:'229200', name:'KODEX 코스닥150', manager:'삼성자산운용',
+      listed:'2015-10-01', aum:6517.6, fee:0.25, top10:36.93, hhi:635.9, effn:6.18,
+      tagline:'코스닥 대장주 — 유동성과 AUM 1위',
+      note:'공개 상위 8종합. 알테오젠이 10.49%로 단일 최대 비중.' },
+    { key:'TIGER', code:'232080', name:'TIGER 코스닥150', manager:'미래에셋자산운용',
+      listed:'2015-11-12', aum:2115.1, fee:0.19, top10:42.60, hhi:794.2, effn:7.66,
+      tagline:'중저 보수·바이오 노출 최대',
+      note:'상위 10종합(지수 기반 추정, ±0.2%p 오차). 바이오 쏠림 26.9%로 최대.' },
+    { key:'RISE',  code:'270810', name:'RISE 코스닥150',  manager:'KB자산운용',
+      listed:'2017-06-16', aum:481.7, fee:0.02, top10:39.11, hhi:574.2, effn:8.41,
+      tagline:'최저 보수 0.02% · 분산도 최상',
+      note:'상위 10종합(공식 PDP 직접 수집). Effective N 8.41로 셋 중 가장 분산.' }
+  ];
+
+  const TOP10_COMPARE = {
+    categories: ['알테오젠','에코프로','에코프로비엠','에이비엘바이오','HLB','펩트론','삼천당제약','리노공업','리가켐바이오','레인보우로보틱스'],
+    series: [
+      { name:'KODEX 코스닥150', color:TOKENS.etf_series.KODEX, data:[10.49, 5.70, 5.09, 4.60, 3.24, 2.95, null, null, 2.65, 2.21] },
+      { name:'TIGER 코스닥150', color:TOKENS.etf_series.TIGER, data:[10.50, 5.70, 5.10, 4.60, 3.20, 3.00, 3.00, 2.70, 2.60, 2.20] },
+      { name:'RISE 코스닥150',  color:TOKENS.etf_series.RISE,  data:[ 6.99, 6.85, 5.23, 3.11, 3.33, 2.74, 3.56, 2.73, 2.35, 2.22] }
     ]
   };
 
-  const CHART_TOP10_X = ['알테오젠','에코프로','에코프로비엠','에이비엘바이오','HLB','펩트론','삼천당제약','리노공업','리가켐바이오','레인보우로보틱스'];
-  const CHART_TOP10_SERIES = [
-    { name:'KODEX 코스닥150', color: TOKENS.etf_series.KODEX, data:[10.49, 5.70, 5.09, 4.60, 3.24, 2.95, null,  null, 2.65, 2.21] },
-    { name:'TIGER 코스닥150', color: TOKENS.etf_series.TIGER, data:[10.50, 5.70, 5.10, 4.60, 3.20, 3.00, 3.00, 2.70, 2.60, 2.20] },
-    { name:'RISE 코스닥150',  color: TOKENS.etf_series.RISE,  data:[ 6.99, 6.85, 5.23, 3.11, 3.33, 2.74, 3.56, 2.73, 2.35, 2.22] }
-  ];
+  const HOLDINGS_TABLE = {
+    cols: ['티커','종목명','섹터','KODEX %','TIGER %','RISE %','3-ETF 평균 %','스프레드 %p'],
+    rows: [
+      ['196170','알테오젠','바이오/헬스케어', 10.49, 10.50, 6.99, 9.33, 3.51],
+      ['086520','에코프로','2차전지/소재',     5.70, 5.70, 6.85, 6.08, 1.15],
+      ['247540','에코프로비엠','2차전지/양극재', 5.09, 5.10, 5.23, 5.14, 0.14],
+      ['298380','에이비엘바이오','바이오/헬스케어', 4.60, 4.60, 3.11, 4.10, 1.49],
+      ['028300','HLB','바이오/헬스케어',         3.24, 3.20, 3.33, 3.26, 0.13],
+      ['087010','펩트론','바이오/헬스케어',      2.95, 3.00, 2.74, 2.90, 0.26],
+      ['000250','삼천당제약','바이오/헬스케어',   null, 3.00, 3.56, 3.28, 0.56],
+      ['058470','리노공업','반도체장비',         null, 2.70, 2.73, 2.72, 0.03],
+      ['141080','리가켐바이오','바이오/헬스케어', 2.65, 2.60, 2.35, 2.53, 0.30],
+      ['277810','레인보우로보틱스','로봇',       2.21, 2.20, 2.22, 2.21, 0.02]
+    ]
+  };
+
+  const HOLDINGS_TOP10 = {
+    KODEX: HOLDINGS_TABLE.rows.map(r => ({ticker:r[0], name:r[1], sector:r[2], weight:r[3], note:r[3]==null?'KODEX 공개 상위 8종 범위 밖':null})),
+    TIGER: HOLDINGS_TABLE.rows.map(r => ({ticker:r[0], name:r[1], sector:r[2], weight:r[4], est:true})),
+    RISE:  HOLDINGS_TABLE.rows.map(r => ({ticker:r[0], name:r[1], sector:r[2], weight:r[5]}))
+  };
+  // Re-sort Top10 per ETF by rank_latest according to spec holdings_grid (already ordered by KODEX rank)
+  Object.keys(HOLDINGS_TOP10).forEach(k => HOLDINGS_TOP10[k].forEach((h, i) => h.rank = i + 1));
 
   const SPREAD_DATA = [
-    {name:'알테오젠',       value:3.51, critical:true},
-    {name:'에이비엘바이오', value:1.49, critical:true},
-    {name:'에코프로',       value:1.15, critical:true},
-    {name:'삼천당제약',     value:0.56},
-    {name:'리가켐바이오',   value:0.30},
-    {name:'펩트론',         value:0.26},
-    {name:'에코프로비엠',   value:0.14},
-    {name:'HLB',            value:0.13},
-    {name:'리노공업',       value:0.03},
-    {name:'레인보우로보틱스', value:0.02}
+    {name:'알테오젠',       value:3.51, critical:true,  color:'#FF6B6B'},
+    {name:'에이비엘바이오', value:1.49, critical:true,  color:'#F5A524'},
+    {name:'에코프로',       value:1.15, critical:true,  color:'#F5A524'},
+    {name:'삼천당제약',     value:0.56, critical:false, color:'#10B981'},
+    {name:'리가켐바이오',   value:0.30, critical:false, color:'#10B981'},
+    {name:'펩트론',         value:0.26, critical:false, color:'#10B981'},
+    {name:'에코프로비엠',   value:0.14, critical:false, color:'#10B981'},
+    {name:'HLB',            value:0.13, critical:false, color:'#10B981'},
+    {name:'리노공업',       value:0.03, critical:false, color:'#10B981'},
+    {name:'레인보우로보틱스', value:0.02, critical:false, color:'#10B981'}
   ];
 
   const TIMESERIES = {
     dates: ['2025-10-14','2026-01-14','2026-04-14'],
-    alteogen_kodex: [7.50, 11.00, 10.49]
+    alteogen_kodex: [7.50, 11.00, 10.49],
+    placeholder: [
+      {name:'에코프로 (KODEX)',       reason:'시점별 원천 비중 N/A'},
+      {name:'에코프로비엠 (KODEX)',   reason:'시점별 원천 비중 N/A'},
+      {name:'에이비엘바이오 (KODEX)', reason:'시점별 원천 비중 N/A'}
+    ]
   };
 
   const CONCENTRATION = {
-    labels: ['Top10 집중도 (%)', '섹터 HHI', 'Effective N'],
-    KODEX: [36.93, 635.9, 6.18],
-    TIGER: [42.60, 794.2, 7.66],
-    RISE:  [39.11, 574.2, 8.41]
+    labels:['Top10 집중도 (%)','섹터 HHI','Effective N'],
+    KODEX:[36.93, 635.9, 6.18],
+    TIGER:[42.60, 794.2, 7.66],
+    RISE: [39.11, 574.2, 8.41]
   };
 
   const AUM_GROWTH = {
-    x: ['2026-01 말', '2026-02 말', '2026-04-13'],
-    KODEX: [1600, 7200, 6517.6],
-    TIGER: [340.6, 2100, 2115.1],
-    RISE:  [null, null, 481.7]
+    x: ['2026-01 말','2026-02 말','2026-04-13'],
+    KODEX:[1600, 7200, 6517.6],
+    TIGER:[340.6, 2100, 2115.1],
+    RISE: [null, null, 481.7]
   };
 
   const HEATMAP = {
-    rows: ['KODEX','TIGER','RISE'],
-    cols: ['바이오/헬스케어','2차전지/소재','2차전지/양극재','반도체장비','로봇'],
-    values: [
-      [23.93, 5.70, 5.09, 0.00, 2.21],
+    rows:['KODEX 코스닥150','TIGER 코스닥150','RISE 코스닥150'],
+    cols:['바이오/헬스케어','2차전지/소재','2차전지/양극재','반도체장비','로봇'],
+    values:[
+      [23.93, 5.70, 5.09, null, 2.21],
       [26.90, 5.70, 5.10, 2.70, 2.20],
       [22.08, 6.85, 5.23, 2.73, 2.22]
     ]
   };
 
-  const REBALANCE_INCLUDED = [
-    {name:'유일로보틱스', sector:'로봇'}, {name:'유진로봇', sector:'로봇'},
-    {name:'로보티즈', sector:'로봇'}, {name:'클로봇', sector:'로봇'},
-    {name:'디앤디파마텍', sector:'바이오'}, {name:'올릭스', sector:'바이오'},
-    {name:'아이쓰리시스템', sector:'바이오/센서'}, {name:'펌텍코리아', sector:'소비재/화장품'},
-    {name:'비에이치아이', sector:'산업재'}, {name:'LS마린솔루션', sector:'산업재/해양'},
-    {name:'감성코퍼레이션', sector:'소비재'}, {name:'인카금융서비스', sector:'금융'},
-    {name:'코나아이', sector:'IT/결제'}, {name:'미코', sector:'반도체장비'},
-    {name:'솔트룩스', sector:'AI/SW'}, {name:'우리기술', sector:'IT'}
+  const INOUT_BUCKETS = [
+    {label:'로봇',                included:4, excluded:0, included_items:['유일로보틱스','유진로봇','로보티즈','클로봇'], excluded_items:[]},
+    {label:'바이오/헬스케어',       included:3, excluded:3, included_items:['디앤디파마텍','올릭스','아이쓰리시스템'], excluded_items:['HLB테라퓨틱스','바이오니아','아이센스']},
+    {label:'반도체 부품/IP',       included:1, excluded:9, included_items:['미코'], excluded_items:['이엠텍','인탑스','파트론','덕산테코피아','아이티엠반도체','오픈엣지테크놀로지','칩스앤미디어','프로텍','기가비스']},
+    {label:'소비재/식품/화장품',   included:2, excluded:2, included_items:['펌텍코리아','감성코퍼레이션'], excluded_items:['매일유업','아이패밀리에스씨']},
+    {label:'산업재/금융/IT',       included:6, excluded:2, included_items:['비에이치아이','LS마린솔루션','인카금융서비스','코나아이','솔트룩스','우리기술'], excluded_items:['한국기업평가','미래나노텍']}
   ];
 
+  const CLASSIFICATION = [
+    {name:'증액 (Increased)',     value:1,  color:TOKENS.category.in,   detail:'알테오젠 +2.99%p'},
+    {name:'신규편입 (정기변경)', value:16, color:TOKENS.category.new,  detail:'2025-12-12 지수 기준'},
+    {name:'제외 (정기변경)',     value:16, color:TOKENS.category.out,  detail:'2025-12-12 지수 기준'},
+    {name:'분류 불가 (N/A)',     value:7,  color:TOKENS.category.hold, detail:'시점별 비중 원천 부재'}
+  ];
+
+  const REBALANCE_INCLUDED = [
+    {name:'유일로보틱스', sector:'로봇'}, {name:'유진로봇', sector:'로봇'}, {name:'로보티즈', sector:'로봇'}, {name:'클로봇', sector:'로봇'},
+    {name:'디앤디파마텍', sector:'바이오'}, {name:'올릭스', sector:'바이오'}, {name:'아이쓰리시스템', sector:'바이오/센서'},
+    {name:'펌텍코리아', sector:'소비재/화장품'}, {name:'비에이치아이', sector:'산업재'}, {name:'LS마린솔루션', sector:'산업재/해양'},
+    {name:'감성코퍼레이션', sector:'소비재'}, {name:'인카금융서비스', sector:'금융'},
+    {name:'코나아이', sector:'IT/결제'}, {name:'미코', sector:'반도체장비'}, {name:'솔트룩스', sector:'AI/SW'}, {name:'우리기술', sector:'IT'}
+  ];
   const REBALANCE_EXCLUDED = [
-    {name:'이엠텍', sector:'반도체/부품'}, {name:'인탑스', sector:'IT/부품'},
-    {name:'파트론', sector:'IT/부품'}, {name:'덕산테코피아', sector:'반도체소재'},
-    {name:'아이티엠반도체', sector:'반도체'}, {name:'오픈엣지테크놀로지', sector:'반도체IP'},
-    {name:'칩스앤미디어', sector:'반도체IP'}, {name:'프로텍', sector:'반도체장비'},
-    {name:'기가비스', sector:'반도체검사'}, {name:'바이오니아', sector:'바이오'},
-    {name:'HLB테라퓨틱스', sector:'바이오'}, {name:'한국기업평가', sector:'금융'},
-    {name:'아이센스', sector:'헬스케어'}, {name:'매일유업', sector:'소비재/식품'},
-    {name:'아이패밀리에스씨', sector:'소비재/화장품'}, {name:'미래나노텍', sector:'소재'}
+    {name:'이엠텍', sector:'반도체/부품'}, {name:'인탑스', sector:'IT/부품'}, {name:'파트론', sector:'IT/부품'},
+    {name:'덕산테코피아', sector:'반도체소재'}, {name:'아이티엠반도체', sector:'반도체'}, {name:'오픈엣지테크놀로지', sector:'반도체IP'},
+    {name:'칩스앤미디어', sector:'반도체IP'}, {name:'프로텍', sector:'반도체장비'}, {name:'기가비스', sector:'반도체검사'},
+    {name:'바이오니아', sector:'바이오'}, {name:'HLB테라퓨틱스', sector:'바이오'}, {name:'한국기업평가', sector:'금융'},
+    {name:'아이센스', sector:'헬스케어'}, {name:'매일유업', sector:'소비재/식품'}, {name:'아이패밀리에스씨', sector:'소비재/화장품'}, {name:'미래나노텍', sector:'소재'}
   ];
 
   const INSIGHTS = [
-    {
-      num:'INSIGHT 01',
-      title:'알테오젠 — 단일 종목이 지수 성과의 ‘압력계’',
-      quant:'KODEX 기준 알테오젠(196170) 비중은 2025-10-14 7.50% → 2026-01-14 11.00% → 2026-04-14 10.49%로 이동. 6개월 누적 <b>+2.99%p</b>, 3개월 누적 −0.51%p. 동일 시점 TIGER 약 10.5% · RISE 6.99% — 공통 편입 종목 중 최대 스프레드 <b>3.51%p</b>.',
-      body:'알테오젠 단일 종목이 KODEX 바이오/헬스케어 섹터 비중(23.93%)의 약 44%를 차지.',
-      context:'2025-12-08 임시주총에서 코스피 이전상장을 의결. 이전 시점에 코스닥150에서 편출되면 3개 ETF 합산 9,114억 원의 10% 내외 수급 재편이 불가피할 것으로 해석될 수 있다. <span class="hyp-tag">가설</span>'
-    },
-    {
-      num:'INSIGHT 02',
-      title:'바이오 쏠림은 구조적, 그러나 ETF별 ‘색깔’은 다르다',
-      quant:'바이오/헬스케어 섹터 비중: <b>KODEX 23.93%</b> · <b>TIGER 26.90%</b> · <b>RISE 22.08%</b>. Effective N: KODEX 6.18 < TIGER 7.66 < <b>RISE 8.41</b>. Top10 집중도는 TIGER(42.60%)가 가장 높고 KODEX(36.93%)가 낮음.',
-      body:'RISE는 2차전지(에코프로+에코프로비엠) 12.08%로 셋 중 가장 높고, TIGER는 반도체장비(리노공업 2.70%)를 명시 포함.',
-      context:'2026-02 AUM 급증(KODEX 약 4배·TIGER 약 6배)의 원인으로 언론은 "바이오 랠리 기대"를 지목 → 세 ETF 모두 같은 섹터 베팅으로 동조화. RISE의 상대적 분산·최저보수(0.02%)는 보수 민감·분산 선호 투자자의 대안이 될 수 있다. <span class="hyp-tag">가설</span>'
-    },
-    {
-      num:'INSIGHT 03',
-      title:'2025-12-12 정기변경 — 지수의 섹터 주연이 바뀌었다',
-      quant:'한국거래소 코스닥150 정기변경: <b>편입 16종 / 편출 16종</b>. 3개 ETF 모두 동일 적용. 편입 구성: 로봇 4종 · 바이오 3종 · 산업재/IT/소재 9종. 편출 구성: 반도체 후공정·부품 6종, 소비재 4종, 바이오 하위 2종.',
-      body:'시점별 섹터 비중 원천 데이터 부재로 절대 %p 증감은 산출 불가이나, 방향성은 "로봇·바이오 ↑ / 반도체 부품·소비재 ↓"로 명확.',
-      context:'언론은 유일로보틱스·로보티즈 등 휴머노이드 로봇 테마를 강조 → 지수가 "코스닥 = 바이오"에서 "바이오 + 로봇" 투 트랙으로 이동 중이라는 해석이 가능. 편출된 반도체 부품 기업은 스마트폰 수요 둔화 국면과 맞물려 있다. <span class="hyp-tag">가설</span>'
-    },
-    {
-      num:'INSIGHT 04',
-      title:'동일 지수, 다른 숫자 — ‘같은 상품’ 착시의 리스크',
-      quant:'상위 10 공통 편입 티커 <b>8개</b>, 단독 편입 <b>0건</b> — 티커 자체는 동일. 그러나 비중 스프레드 ≥1%p 종목이 3종: 알테오젠 3.51%p · 에이비엘바이오 1.49%p · 에코프로 1.15%p.',
-      body:'삼천당제약·리노공업은 KODEX 공개 상위 8종 범위 밖이나 TIGER/RISE Top10에는 포함 — 공개 상세 수준 차이로 겉보기 격차 발생.',
-      context:'스프레드 원인은 리밸런싱 시차(공시일 차이) · CU 단위 차이 · 각사 샘플링/최적 복제 정책이 혼합된 결과로 해석. 어느 것도 Tracking Error에 치명적이진 않지만, 장기 누적에서는 수십 bp 편차로 이어질 수 있다. <span class="hyp-tag">가설</span>'
-    },
-    {
-      num:'INSIGHT 05',
-      title:'AUM 4~6배 폭증 — 자금은 ‘결과’가 아닌 ‘기대’를 따른다',
-      quant:'2026-04-13 AUM: <b>KODEX 6,517.6억 · TIGER 2,115.1억 · RISE 481.7억</b>, 합계 약 <b>9,114억</b>. 2026-02 한 달간 KODEX 약 4배(1.6조→7.2조), TIGER 약 6배(3,406억→2.1조) 증가 후 2개월 소폭 조정. 급증분 상당분은 유지.',
-      body:'개인·외국인 순매수가 동시에 관찰된 점은 이례적.',
-      context:'언론·커뮤니티 공통 키워드: "알테오젠 신약 파이프라인" · "로봇 테마 재부상" · "코스닥 반등 기대". 즉 자금은 이미 실현된 수익률이 아닌 향후 모멘텀 기대에 반응. 양측 동반 유입은 시장 전반의 리스크 온(risk-on) 국면으로 해석될 수 있다. <span class="hyp-tag">가설</span>'
-    }
+    {id:1, headline:'알테오젠: 단일 종목이 지수 성과의 압력계',
+     tagline:'KODEX 기준 6M +2.99%p, 바이오 섹터 HHI의 약 90% 기여',
+     quant:[
+       'KODEX 알테오젠 비중 7.50 → 11.00 → 10.49 % (6M +2.99%p, 3M -0.51%p)',
+       '3-ETF 스프레드 3.51%p (KODEX 10.49 vs RISE 6.99) — 공통 편입 종목 중 최대',
+       'KODEX 바이오/헬스케어 섹터(23.93%)의 약 44% 를 알테오젠 단일 종목이 차지'
+     ],
+     context:[
+       '[가설] 2025-12-08 임시주총 코스피 이전상장 의결, 2026년 중 이전 예정 (press_229200.md) → 편출 시 3-ETF 합산 AUM의 약 10% 규모 수급 재편 가능',
+       '[가설] KODEX vs RISE 비중 괴리는 집계 시점/CU 단위 차이로 보임 — 교차 검증 필요'
+     ],
+     severity:'high', color:'#FF6B6B'},
+    {id:2, headline:"바이오 쏠림은 구조적, ETF별 '색깔'은 다르다",
+     tagline:'TIGER 26.9% > KODEX 23.9% > RISE 22.1% — RISE가 가장 분산적',
+     quant:[
+       '바이오/헬스케어 비중: KODEX 23.93 / TIGER 26.90 / RISE 22.08 %',
+       'Effective N: KODEX 6.18 < TIGER 7.66 < RISE 8.41 (RISE 최고 분산)',
+       'Top10 집중도: TIGER 42.60 > RISE 39.11 > KODEX 36.93 %'
+     ],
+     context:[
+       "[가설] 2026-02 AUM 급증(KODEX ~4배, TIGER ~6배)은 '바이오 랠리 기대'를 공통 배경으로 해석 가능 (press 채널)",
+       '[가설] RISE의 최저보수 0.02% + 분산도 최고 조합은 보수 민감·분산 선호 투자자의 대안으로 해석 가능'
+     ],
+     severity:'medium', color:'#4F8CFF'},
+    {id:3, headline:'2025-12-12 정기변경: 지수의 섹터 주연이 바뀌었다',
+     tagline:"로봇 4종·바이오 3종 편입 vs 반도체 부품 9종 편출 — '바이오+로봇' 투 트랙",
+     quant:[
+       '편입 16종: 로봇 4(유일로보틱스·유진로봇·로보티즈·클로봇), 바이오 3, 산업재/금융/IT 6, 소비재 2, 반도체장비 1',
+       '편출 16종: 반도체 부품/IP 9, 소비재/식품/화장품 4, 바이오 2, 금융 1',
+       '시점별 섹터 비중 원천 부재로 절대 %p 증감 산출 불가 — 구성 방향만 확정'
+     ],
+     context:[
+       '[가설] 휴머노이드 로봇 테마 재부상이 편입 배경 (press 채널에서 반복 언급)',
+       "[가설] 스마트폰 수요 둔화로 반도체 부품 기업이 대거 편출 — 커뮤니티에서 '코스닥 반도체가 얇아졌다' 류 발화 관측(대표성 주의)"
+     ],
+     severity:'medium', color:'#10B981'},
+    {id:4, headline:"동일 지수, 다른 숫자: '같은 상품' 착시의 리스크",
+     tagline:'상위 10 공통 티커 8종, 그러나 비중 스프레드 ≥1%p 종목 3종',
+     quant:[
+       '공통 편입 티커: 8종 (단독 편입 0건)',
+       '스프레드 ≥1%p: 알테오젠 3.51 / 에이비엘바이오 1.49 / 에코프로 1.15 %p',
+       '삼천당제약·리노공업은 KODEX 공개 상위 8종 범위 밖이지만 실제 지수에는 포함'
+     ],
+     context:[
+       '[가설] 스프레드 원인: (a) 리밸런싱 시차, (b) CU 단위 차이, (c) 각사 샘플링/복제 정책 — 혼합 요인',
+       '[가설] 추적오차는 bp 단위지만 알테오젠 같은 대형 편입 종목 이벤트 국면에는 누적 편차가 커질 수 있음'
+     ],
+     severity:'medium', color:'#F5A524'},
+    {id:5, headline:"AUM 4~6배 폭증: 자금은 '결과'가 아닌 '기대'를 따른다",
+     tagline:'2026-02 한 달간 KODEX ~4배, TIGER ~6배. 개인·외국인 동반 유입',
+     quant:[
+       '2026-04-13 AUM: KODEX 6,517.6 / TIGER 2,115.1 / RISE 481.7 억원 (합계 9,114억)',
+       'etf-researcher 전달: 2026-02 KODEX 1.6조→7.2조, TIGER 3,406억→2.1조',
+       '이후 2개월 소폭 조정 후 현 수준 유지'
+     ],
+     context:[
+       '[가설] 알테오젠 신약 파이프라인·로봇 테마·코스닥 반등 기대가 공통 키워드 (press/community)',
+       '[가설] 개인+외국인 동반 순매수는 리스크 온 국면의 시그널로 해석 가능 — 지속성은 정량 미확인'
+     ],
+     severity:'low', color:'#7EE8CF'}
+  ];
+
+  const CONTEXT_PRESS = {
+    title:'언론 보도 맥락 (가설 제시용)',
+    themes:[
+      '알테오젠 코스피 이전상장 의결(2025-12-08)과 신약 파이프라인 모멘텀',
+      '2025-12-12 코스닥150 정기변경 — 로봇/바이오 편입, 반도체 부품 편출',
+      '2026-02 코스닥 ETF AUM 폭증, 개인·외국인 동시 순매수'
+    ],
+    disclaimer:'인용은 가설 제시용이며, 보고서에서는 반드시 [가설] 태그를 유지합니다.'
+  };
+  const CONTEXT_COMMUNITY = {
+    title:'커뮤니티 반응 맥락 (대표성 경고)',
+    themes:[
+      '"체감상 코스닥 반도체가 얇아졌다" — 정기변경 이후 반도체 부품 종목 이탈 관련',
+      '"알테오젠 코스피 넘어가면 코스닥 ETF는 어떻게 되나" — 수급 재편 우려',
+      '"RISE가 보수 0.02%라 갈아타려는데" — 보수 민감 투자자 반응'
+    ],
+    disclaimer:'공개 언론에 인용된 발화만 수집 — 네이버 종목토론방·디시·블라인드 직접 크롤링은 미수행. 표본 편향 가능성 있음. 대표성 단정 금지.'
+  };
+
+  const DATA_LIMITATIONS = [
+    "시점별 원천 비중 공백: 알테오젠 외 모든 종목의 2025-10 / 2026-01 시점 개별 비중이 N/A. '증액/축소' 정량 분류는 알테오젠 1건만 확정. 그 외는 2025-12-12 지수 정기변경 공시를 대리 근거로 사용.",
+    'TIGER 수치 정확도: 미래에셋 PDP PDF 파싱 실패로 대부분 지수 기반 추정치 (±0.2%p 오차 가능).',
+    'RISE vs KODEX 알테오젠 괴리: 10.49% vs 6.99% 스프레드 3.51%p는 표면적 사실이지만, 집계 시점·CU 단위 차이일 가능성 배제 불가 — 추가 원천 확인 권장.',
+    '섹터 분류: GICS·KRX 공식 분류가 아닌 본 분석의 실무 분류(바이오/2차전지/로봇/반도체장비). 기준 변경 시 HHI·Effective N이 달라질 수 있음.',
+    '커뮤니티 대표성: 네이버 종목토론방·디시·블라인드 직접 크롤링 제한으로 공개 언론 인용 발화만 수집. 표본 일부에 불과하며 대표성을 주장하지 않음.'
   ];
 
   const SOURCES = [
@@ -711,12 +678,9 @@
     {item:'2026-02 삼성증권 ETP Weekly Insight', url:'https://samsungpop.com/common.do?cmd=down&contentType=application%2Fpdf&fileName=3020%2F2026020212581738K_02_02.pdf', grade:'A', date:'2026-04-14'}
   ];
 
-  // ====================================================================
-  // THEME / PARTICLE BG / REVEAL
-  // ====================================================================
+  // ==================== BACKGROUND / THEME / REVEAL ====================
   (function () {
     'use strict';
-
     const html = document.documentElement;
     const themeBtn = document.getElementById('theme-toggle');
     const saved = localStorage.getItem('theme');
@@ -727,8 +691,6 @@
       localStorage.setItem('theme', next);
       window.__rebuildCharts && window.__rebuildCharts();
     });
-
-    // Reveal
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e, i) => {
         if (e.isIntersecting) {
@@ -739,7 +701,6 @@
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-    // Particle background
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!prefersReduced) {
       const canvas = document.getElementById('bg-canvas');
@@ -747,7 +708,6 @@
       let particles = [], W = 0, H = 0, DPR = Math.min(window.devicePixelRatio || 1, 2);
       const N = () => (window.innerWidth < 768 ? 40 : 75);
       const LINK = 140;
-
       function resize() {
         W = innerWidth; H = innerHeight;
         canvas.width = W * DPR; canvas.height = H * DPR;
@@ -758,8 +718,7 @@
         constructor() { this.reset(); }
         reset() {
           this.x = Math.random() * W; this.y = Math.random() * H;
-          this.vx = (Math.random() - 0.5) * 0.3;
-          this.vy = (Math.random() - 0.5) * 0.3;
+          this.vx = (Math.random() - 0.5) * 0.3; this.vy = (Math.random() - 0.5) * 0.3;
           this.r = 1 + Math.random() * 1.4;
         }
         step() {
@@ -773,15 +732,13 @@
       addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
       addEventListener('mouseout', () => { mouseX = -9999; mouseY = -9999; });
       addEventListener('resize', init, { passive: true });
-
       function frame() {
         ctx.clearRect(0, 0, W, H);
         for (const p of particles) p.step();
         for (let i = 0; i < particles.length; i++) {
           for (let j = i + 1; j < particles.length; j++) {
             const a = particles[i], b = particles[j];
-            const dx = a.x - b.x, dy = a.y - b.y;
-            const d = Math.hypot(dx, dy);
+            const dx = a.x - b.x, dy = a.y - b.y, d = Math.hypot(dx, dy);
             if (d < LINK) {
               ctx.strokeStyle = 'rgba(79,140,255,' + (0.14 * (1 - d / LINK)).toFixed(3) + ')';
               ctx.lineWidth = 1;
@@ -805,25 +762,50 @@
     }
   })();
 
-  // ====================================================================
-  // RENDER: ETF TAB / HOLDINGS / REBALANCE / INSIGHTS / SOURCES
-  // ====================================================================
+  // ==================== RENDER ====================
+  function renderKpiHero() {
+    const grid = document.getElementById('kpi-grid');
+    grid.innerHTML = KPI_HERO.map(k => {
+      const numberVal = (typeof k.value === 'number') ? k.value.toLocaleString('ko-KR') : k.value;
+      const deltaChip = k.delta === '+' ? '<span class="kpi-delta-pos">+</span>' : '';
+      return `
+        <div class="kpi-card reveal">
+          <div class="kpi-label">${k.label}</div>
+          <div class="kpi-value">${deltaChip}${numberVal}${k.unit ? `<span class="kpi-unit"> ${k.unit}</span>` : ''}</div>
+          <div class="kpi-sub">${k.hint}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
   function renderEtfDetail(etfKey) {
     const etf = ETFS.find(e => e.key === etfKey);
     const color = TOKENS.etf_series[etfKey];
-    document.getElementById('etf-badge').textContent = etfKey;
-    document.getElementById('etf-badge').style.background = `color-mix(in srgb, ${color} 25%, transparent)`;
-    document.getElementById('etf-badge').style.color = color;
-    document.getElementById('etf-name').textContent = etf.name;
-    document.getElementById('etf-manager').textContent = `${etf.manager} · 코스닥150 추종`;
-    document.getElementById('etf-listed').textContent = etf.listed;
-    document.getElementById('etf-aum').textContent = etf.aum.toLocaleString('ko-KR');
-    document.getElementById('etf-fee').textContent = etf.fee.toFixed(2);
-    document.getElementById('etf-top10').textContent = etf.top10.toFixed(2) + '%';
-    document.getElementById('etf-effn').textContent = etf.effn.toFixed(2);
-    document.getElementById('etf-note').textContent = etf.note;
-    document.getElementById('holding-etf-label').textContent = etf.name;
-    document.getElementById('holding-etf-label').style.color = color;
+    const card = document.getElementById('etf-detail-card');
+    card.innerHTML = `
+      <div class="etf-card-head">
+        <div>
+          <span class="etf-badge" style="background:color-mix(in srgb, ${color} 25%, transparent);color:${color};">${etfKey}</span>
+          <h3 class="etf-name">${etf.name}</h3>
+          <p class="etf-manager">${etf.manager} · 코스닥150 추종 · ${etf.code}</p>
+          <span class="etf-tagline" style="background:color-mix(in srgb, ${color} 14%, transparent);color:${color};">${etf.tagline}</span>
+        </div>
+        <div style="text-align:right;">
+          <div class="kpi-label">상장일</div>
+          <div class="etf-stat-value">${etf.listed}</div>
+        </div>
+      </div>
+      <div class="etf-stat-grid">
+        <div><div class="etf-stat-label">AUM (억원)</div><div class="etf-stat-value">${etf.aum.toLocaleString('ko-KR')}</div></div>
+        <div><div class="etf-stat-label">총보수 (%)</div><div class="etf-stat-value">${etf.fee.toFixed(2)}</div></div>
+        <div><div class="etf-stat-label">Top10 집중도</div><div class="etf-stat-value">${fmt.pct(etf.top10)}</div></div>
+        <div><div class="etf-stat-label">Effective N</div><div class="etf-stat-value">${etf.effn.toFixed(2)}</div></div>
+      </div>
+      <p style="margin-top:14px;font-size:13px;color:var(--text-soft);">${etf.note}</p>
+    `;
+    const label = document.getElementById('holding-etf-label');
+    label.textContent = etf.name;
+    label.style.color = color;
     renderHoldings(etfKey);
   }
 
@@ -834,7 +816,7 @@
     grid.innerHTML = items.map(h => {
       const wStr = (h.weight === null || h.weight === undefined)
         ? `<span class="na-pill">N/A</span>`
-        : `<span class="holding-weight" style="color:${color};">${h.weight.toFixed(2)}%${h.est ? '<span style="font-size:10px;color:var(--text-soft);font-weight:500;"> (추정)</span>' : ''}</span>`;
+        : `<span class="holding-weight" style="color:${color};">${h.weight.toFixed(2)}%${h.est ? '<span class="est-badge">(추정)</span>' : ''}</span>`;
       return `
         <div class="holding-card" title="${h.ticker}">
           <div class="holding-rank">#${h.rank} · ${h.ticker}</div>
@@ -847,35 +829,85 @@
     }).join('');
   }
 
+  function renderHoldingsTable() {
+    const tbl = document.getElementById('holdings-table');
+    const th = `<thead><tr>${HOLDINGS_TABLE.cols.map(c => `<th>${c}</th>`).join('')}</tr></thead>`;
+    const tb = `<tbody>${HOLDINGS_TABLE.rows.map(r => {
+      const spread = r[7];
+      const highlightCls = spread >= 1.0 ? 'highlight-row' : '';
+      const cells = r.map((v, i) => {
+        if (i <= 2) return `<td>${v}</td>`;
+        if (v === null) return `<td class="na-cell">—</td>`;
+        if (i === 7) return `<td>${fmt.pp(v)}</td>`;
+        return `<td>${fmt.pct(v)}</td>`;
+      }).join('');
+      return `<tr class="${highlightCls}">${cells}</tr>`;
+    }).join('')}</tbody>`;
+    tbl.innerHTML = th + tb;
+  }
+
   function renderRebalance() {
-    const group = (arr, fromColor) => {
-      return arr.map(x => `
-        <div style="display:flex;justify-content:space-between;padding:8px 10px;border-bottom:1px solid var(--border);font-size:14px;">
-          <span style="font-weight:600;">${x.name}</span>
-          <span style="color:var(--text-soft);font-size:12px;">${x.sector}</span>
-        </div>
-      `).join('');
-    };
-    document.getElementById('rebalance-included').innerHTML = group(REBALANCE_INCLUDED);
-    document.getElementById('rebalance-excluded').innerHTML = group(REBALANCE_EXCLUDED);
+    const row = (x) => `<div class="rebalance-row"><span style="font-weight:600;">${x.name}</span><span style="color:var(--text-soft);font-size:12px;">${x.sector}</span></div>`;
+    document.getElementById('rebalance-included').innerHTML = REBALANCE_INCLUDED.map(row).join('');
+    document.getElementById('rebalance-excluded').innerHTML = REBALANCE_EXCLUDED.map(row).join('');
   }
 
   function renderInsights() {
     const list = document.getElementById('insights-list');
-    list.innerHTML = INSIGHTS.map(i => `
-      <article class="insight-item reveal in">
-        <div class="insight-num">${i.num}</div>
-        <h3 class="insight-title">${i.title}</h3>
-        <div class="insight-quant">${i.quant}</div>
-        <p class="insight-body">${i.body}</p>
-        <p class="insight-context">${i.context}</p>
-      </article>
-    `).join('');
+    list.innerHTML = INSIGHTS.map(i => {
+      const sevClass = 'sev-' + i.severity;
+      const sevLabel = { high:'HIGH', medium:'MEDIUM', low:'LOW' }[i.severity];
+      return `
+        <article class="insight-item reveal in" style="--insight-color:${i.color};">
+          <div class="insight-num">INSIGHT ${String(i.id).padStart(2,'0')}<span class="insight-severity ${sevClass}">${sevLabel}</span></div>
+          <h3 class="insight-title">${i.headline}</h3>
+          <p class="insight-tagline">${i.tagline}</p>
+          <div class="insight-block quant">
+            <div class="insight-block-label">EVIDENCE · QUANT</div>
+            <ul>${i.quant.map(q => `<li>${q}</li>`).join('')}</ul>
+          </div>
+          <div class="insight-block context">
+            <div class="insight-block-label">EVIDENCE · CONTEXT</div>
+            <ul>${i.context.map(c => {
+              const isHyp = /^\[가설\]/.test(c);
+              const body = c.replace(/^\[가설\]\s*/, '');
+              return `<li>${isHyp ? '<span class="hyp-tag">가설</span>' : ''}${body}</li>`;
+            }).join('')}</ul>
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  function renderContext() {
+    const press = document.getElementById('context-press');
+    press.innerHTML = `
+      <h3>${CONTEXT_PRESS.title}</h3>
+      ${CONTEXT_PRESS.themes.map(t => `<div class="theme-item">${t}</div>`).join('')}
+      <div class="disclaimer-box">${CONTEXT_PRESS.disclaimer}</div>
+    `;
+    const comm = document.getElementById('context-community');
+    comm.innerHTML = `
+      <h3>${CONTEXT_COMMUNITY.title}</h3>
+      ${CONTEXT_COMMUNITY.themes.map(t => `<div class="theme-item">${t}</div>`).join('')}
+      <div class="disclaimer-box">${CONTEXT_COMMUNITY.disclaimer}</div>
+    `;
+  }
+
+  function renderLimitations() {
+    document.getElementById('limit-list').innerHTML = DATA_LIMITATIONS.map(l => {
+      const [head, ...rest] = l.split(':');
+      return `<div class="limit-item"><strong>${head}:</strong>${rest.join(':')}</div>`;
+    }).join('');
+  }
+
+  function renderPlaceholderSeries() {
+    const ul = document.getElementById('placeholder-series');
+    ul.innerHTML = TIMESERIES.placeholder.map(p => `<li>${p.name} — ${p.reason}</li>`).join('');
   }
 
   function renderSources() {
-    const tbody = document.getElementById('sources-tbody');
-    tbody.innerHTML = SOURCES.map(s => `
+    document.getElementById('sources-tbody').innerHTML = SOURCES.map(s => `
       <tr>
         <td>${s.item}</td>
         <td><a href="${s.url}" target="_blank" rel="noreferrer noopener" style="color:var(--brand-blue);text-decoration:underline;">링크 ↗</a></td>
@@ -885,28 +917,12 @@
     `).join('');
   }
 
-  // ====================================================================
-  // ECHARTS
-  // ====================================================================
+  // ==================== CHARTS ====================
   const chartInstances = {};
-
-  function baseTextColor() {
-    return getComputedStyle(document.documentElement).getPropertyValue('--text').trim();
-  }
-  function baseSoftColor() {
-    return getComputedStyle(document.documentElement).getPropertyValue('--text-soft').trim();
-  }
-  function baseGridColor() {
-    return document.documentElement.getAttribute('data-theme') === 'light' ? '#E5E7EB' : 'rgba(255,255,255,0.08)';
-  }
-  function commonChartOpts() {
-    return {
-      textStyle: { fontFamily: "'Pretendard Variable', sans-serif", color: baseTextColor() },
-      animation: true,
-      animationDuration: 700,
-      animationEasing: 'cubicOut'
-    };
-  }
+  const tc = () => getComputedStyle(document.documentElement).getPropertyValue('--text').trim();
+  const ts = () => getComputedStyle(document.documentElement).getPropertyValue('--text-soft').trim();
+  const tg = () => document.documentElement.getAttribute('data-theme') === 'light' ? '#E5E7EB' : 'rgba(255,255,255,0.08)';
+  const common = () => ({ textStyle:{ fontFamily:"'Pretendard Variable', sans-serif", color:tc() }, animation:true, animationDuration:700, animationEasing:'cubicOut' });
 
   function initCharts() {
     if (typeof echarts === 'undefined') {
@@ -915,235 +931,188 @@
       });
       return;
     }
+    Object.values(chartInstances).forEach(c => c && c.dispose && c.dispose());
 
-    // -- AUM 비교
-    chartInstances.aum = echarts.init(document.getElementById('chart-aum'), null, { renderer: 'svg' });
+    // AUM 비교
+    chartInstances.aum = echarts.init(document.getElementById('chart-aum'), null, { renderer:'svg' });
     chartInstances.aum.setOption({
-      ...commonChartOpts(),
-      grid: { left: 60, right: 32, top: 24, bottom: 40, containLabel: true },
-      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: v => v.toLocaleString() + ' 억원' },
-      xAxis: { type: 'category', data: ETFS.map(e => e.name), axisLabel: { color: baseSoftColor() }, axisLine: { lineStyle: { color: baseGridColor() } } },
-      yAxis: { type: 'value', name: 'AUM (억원)', nameTextStyle: { color: baseSoftColor() }, axisLabel: { color: baseSoftColor() }, splitLine: { lineStyle: { color: baseGridColor() } } },
-      series: [{
-        type: 'bar',
-        data: ETFS.map(e => ({ value: e.aum, itemStyle: { color: TOKENS.etf_series[e.key], borderRadius: [8,8,0,0] } })),
-        barWidth: 60,
-        label: { show: true, position: 'top', formatter: '{c}', color: baseTextColor() }
-      }]
+      ...common(),
+      grid:{ left:60, right:32, top:24, bottom:40, containLabel:true },
+      tooltip:{ trigger:'axis', axisPointer:{ type:'shadow' }, valueFormatter:v => v.toLocaleString() + ' 억원' },
+      xAxis:{ type:'category', data:ETFS.map(e => e.name), axisLabel:{ color:ts() }, axisLine:{ lineStyle:{ color:tg() } } },
+      yAxis:{ type:'value', name:'AUM (억원)', nameTextStyle:{ color:ts() }, axisLabel:{ color:ts() }, splitLine:{ lineStyle:{ color:tg() } } },
+      series:[{ type:'bar', barWidth:60,
+        data:ETFS.map(e => ({ value:e.aum, itemStyle:{ color:TOKENS.etf_series[e.key], borderRadius:[8,8,0,0] } })),
+        label:{ show:true, position:'top', formatter:v => v.value.toLocaleString(), color:tc() } }]
     });
 
-    // -- AUM 폭증
-    chartInstances.aumGrowth = echarts.init(document.getElementById('chart-aum-growth'), null, { renderer: 'svg' });
+    // AUM 폭증
+    chartInstances.aumGrowth = echarts.init(document.getElementById('chart-aum-growth'), null, { renderer:'svg' });
     chartInstances.aumGrowth.setOption({
-      ...commonChartOpts(),
-      grid: { left: 50, right: 24, top: 40, bottom: 40, containLabel: true },
-      legend: { data: ['KODEX','TIGER','RISE'], textStyle: { color: baseTextColor() }, top: 0 },
-      tooltip: { trigger: 'axis', valueFormatter: v => (v == null ? 'N/A' : v.toLocaleString() + ' 억원') },
-      xAxis: { type: 'category', data: AUM_GROWTH.x, axisLabel: { color: baseSoftColor() }, axisLine: { lineStyle: { color: baseGridColor() } } },
-      yAxis: { type: 'value', name: '억원', nameTextStyle: { color: baseSoftColor() }, axisLabel: { color: baseSoftColor() }, splitLine: { lineStyle: { color: baseGridColor() } } },
-      series: [
-        { name: 'KODEX', type: 'line', data: AUM_GROWTH.KODEX, smooth: true, lineStyle: { width: 3, color: TOKENS.etf_series.KODEX }, itemStyle: { color: TOKENS.etf_series.KODEX }, symbolSize: 10, connectNulls: false },
-        { name: 'TIGER', type: 'line', data: AUM_GROWTH.TIGER, smooth: true, lineStyle: { width: 3, color: TOKENS.etf_series.TIGER }, itemStyle: { color: TOKENS.etf_series.TIGER }, symbolSize: 10, connectNulls: false },
-        { name: 'RISE',  type: 'line', data: AUM_GROWTH.RISE,  smooth: true, lineStyle: { width: 3, color: TOKENS.etf_series.RISE  }, itemStyle: { color: TOKENS.etf_series.RISE  }, symbolSize: 10, connectNulls: false }
-      ]
-    });
-
-    // -- 집중도 (그룹 막대, 3 시리즈 x 3 지표). HHI는 스케일이 커서 dual axis
-    chartInstances.concentration = echarts.init(document.getElementById('chart-concentration'), null, { renderer: 'svg' });
-    chartInstances.concentration.setOption({
-      ...commonChartOpts(),
-      grid: { left: 50, right: 60, top: 40, bottom: 50, containLabel: true },
-      legend: { data: ['KODEX','TIGER','RISE'], textStyle: { color: baseTextColor() }, top: 0 },
-      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-      xAxis: { type: 'category', data: CONCENTRATION.labels, axisLabel: { color: baseSoftColor() }, axisLine: { lineStyle: { color: baseGridColor() } } },
-      yAxis: [
-        { type: 'value', name: 'Top10(%) / Eff N', axisLabel: { color: baseSoftColor() }, splitLine: { lineStyle: { color: baseGridColor() } }, nameTextStyle: { color: baseSoftColor() } },
-        { type: 'value', name: 'HHI', axisLabel: { color: baseSoftColor() }, splitLine: { show: false }, nameTextStyle: { color: baseSoftColor() } }
-      ],
-      series: ['KODEX','TIGER','RISE'].map(k => ({
-        name: k, type: 'bar',
-        data: CONCENTRATION[k].map((v, idx) => ({
-          value: v,
-          itemStyle: { color: TOKENS.etf_series[k], borderRadius: [4,4,0,0] }
-        })),
-        yAxisIndex: 0
-      })).map((s, idx, arr) => {
-        s.data = s.data.map((d, i) => ({ ...d, yAxisIndex: i === 1 ? 1 : 0 }));
-        return s;
-      })
-    });
-    // Note: ECharts single-series cannot mix yAxisIndex per datapoint, so use two series groups.
-    chartInstances.concentration.setOption({
-      ...commonChartOpts(),
-      grid: { left: 50, right: 60, top: 40, bottom: 50, containLabel: true },
-      legend: { data: ['KODEX','TIGER','RISE'], textStyle: { color: baseTextColor() }, top: 0 },
-      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-      xAxis: { type: 'category', data: CONCENTRATION.labels, axisLabel: { color: baseSoftColor() }, axisLine: { lineStyle: { color: baseGridColor() } } },
-      yAxis: [
-        { type: 'value', name: 'Top10(%) / Eff N', axisLabel: { color: baseSoftColor() }, splitLine: { lineStyle: { color: baseGridColor() } }, nameTextStyle: { color: baseSoftColor() } },
-        { type: 'value', name: 'HHI', axisLabel: { color: baseSoftColor() }, splitLine: { show: false }, nameTextStyle: { color: baseSoftColor() } }
-      ],
-      series: ['KODEX','TIGER','RISE'].flatMap(k => ([
-        { name: k, type: 'bar',
-          data: [CONCENTRATION[k][0], null, CONCENTRATION[k][2]],
-          yAxisIndex: 0,
-          itemStyle: { color: TOKENS.etf_series[k], borderRadius: [4,4,0,0] },
-          stack: 'left' + k
-        },
-        { name: k, type: 'bar',
-          data: [null, CONCENTRATION[k][1], null],
-          yAxisIndex: 1,
-          itemStyle: { color: TOKENS.etf_series[k], borderRadius: [4,4,0,0], opacity: 0.7 },
-          stack: 'right' + k
-        }
-      ]))
-    });
-
-    // -- Top10 비교 (수평 그룹 바)
-    chartInstances.top10 = echarts.init(document.getElementById('chart-top10'), null, { renderer: 'svg' });
-    chartInstances.top10.setOption({
-      ...commonChartOpts(),
-      grid: { left: 120, right: 40, top: 40, bottom: 40, containLabel: true },
-      legend: { data: CHART_TOP10_SERIES.map(s => s.name), textStyle: { color: baseTextColor() }, top: 0 },
-      tooltip: {
-        trigger: 'axis', axisPointer: { type: 'shadow' },
-        formatter: (params) => {
-          const stock = params[0].axisValueLabel;
-          const lines = params.map(p => `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${p.color};margin-right:6px;"></span>${p.seriesName}: <b>${p.value == null ? 'N/A' : p.value.toFixed(2)}%</b>`);
-          return `<b>${stock}</b><br/>` + lines.join('<br/>');
-        }
-      },
-      xAxis: { type: 'value', name: '비중(%)', axisLabel: { formatter: '{value}%', color: baseSoftColor() }, splitLine: { lineStyle: { color: baseGridColor() } }, nameTextStyle: { color: baseSoftColor() } },
-      yAxis: { type: 'category', data: [...CHART_TOP10_X].reverse(), axisLabel: { color: baseTextColor(), fontSize: 13 }, axisLine: { lineStyle: { color: baseGridColor() } } },
-      series: CHART_TOP10_SERIES.map(s => ({
-        name: s.name, type: 'bar',
-        data: [...s.data].reverse(),
-        itemStyle: { color: s.color, borderRadius: [0, 4, 4, 0] },
-        barWidth: 10,
-        connectNulls: false
+      ...common(),
+      grid:{ left:50, right:24, top:40, bottom:40, containLabel:true },
+      legend:{ data:['KODEX','TIGER','RISE'], textStyle:{ color:tc() }, top:0 },
+      tooltip:{ trigger:'axis', valueFormatter:v => v==null?'N/A':v.toLocaleString()+' 억원' },
+      xAxis:{ type:'category', data:AUM_GROWTH.x, axisLabel:{ color:ts() }, axisLine:{ lineStyle:{ color:tg() } } },
+      yAxis:{ type:'value', name:'억원', nameTextStyle:{ color:ts() }, axisLabel:{ color:ts() }, splitLine:{ lineStyle:{ color:tg() } } },
+      series:['KODEX','TIGER','RISE'].map(k => ({
+        name:k, type:'line', data:AUM_GROWTH[k], smooth:true,
+        lineStyle:{ width:3, color:TOKENS.etf_series[k] },
+        itemStyle:{ color:TOKENS.etf_series[k] },
+        symbolSize:10, connectNulls:false
       }))
     });
 
-    // -- Spread
-    chartInstances.spread = echarts.init(document.getElementById('chart-spread'), null, { renderer: 'svg' });
-    chartInstances.spread.setOption({
-      ...commonChartOpts(),
-      grid: { left: 120, right: 60, top: 20, bottom: 40, containLabel: true },
-      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: v => v.toFixed(2) + ' %p' },
-      xAxis: { type: 'value', name: '스프레드 (%p)', axisLabel: { color: baseSoftColor() }, splitLine: { lineStyle: { color: baseGridColor() } }, nameTextStyle: { color: baseSoftColor() } },
-      yAxis: { type: 'category', data: [...SPREAD_DATA.map(d => d.name)].reverse(), axisLabel: { color: baseTextColor() }, axisLine: { lineStyle: { color: baseGridColor() } } },
-      series: [{
-        type: 'bar',
-        data: [...SPREAD_DATA].reverse().map(d => ({
-          value: d.value,
-          itemStyle: { color: d.critical ? TOKENS.category.out : TOKENS.category.hold, borderRadius: [0, 6, 6, 0] }
-        })),
-        barWidth: 16,
-        label: { show: true, position: 'right', formatter: '{c} %p', color: baseSoftColor() },
-        markLine: {
-          symbol: 'none',
-          data: [{ xAxis: 1.0, label: { formatter: '유의 스프레드 ≥ 1%p', color: TOKENS.category.out, position: 'end' }, lineStyle: { color: TOKENS.category.out, type: 'dashed' } }]
+    // 집중도 (이중 축)
+    chartInstances.concentration = echarts.init(document.getElementById('chart-concentration'), null, { renderer:'svg' });
+    chartInstances.concentration.setOption({
+      ...common(),
+      grid:{ left:50, right:60, top:40, bottom:50, containLabel:true },
+      legend:{ data:['KODEX','TIGER','RISE'], textStyle:{ color:tc() }, top:0 },
+      tooltip:{ trigger:'axis', axisPointer:{ type:'shadow' } },
+      xAxis:{ type:'category', data:CONCENTRATION.labels, axisLabel:{ color:ts() }, axisLine:{ lineStyle:{ color:tg() } } },
+      yAxis:[
+        { type:'value', name:'Top10(%) / Eff N', axisLabel:{ color:ts() }, splitLine:{ lineStyle:{ color:tg() } }, nameTextStyle:{ color:ts() } },
+        { type:'value', name:'HHI', axisLabel:{ color:ts() }, splitLine:{ show:false }, nameTextStyle:{ color:ts() } }
+      ],
+      series: ['KODEX','TIGER','RISE'].flatMap(k => ([
+        { name:k, type:'bar', yAxisIndex:0, data:[CONCENTRATION[k][0], null, CONCENTRATION[k][2]],
+          itemStyle:{ color:TOKENS.etf_series[k], borderRadius:[4,4,0,0] }, stack:'left'+k },
+        { name:k, type:'bar', yAxisIndex:1, data:[null, CONCENTRATION[k][1], null],
+          itemStyle:{ color:TOKENS.etf_series[k], borderRadius:[4,4,0,0], opacity:0.7 }, stack:'right'+k }
+      ]))
+    });
+
+    // Top10 수평 그룹 막대
+    chartInstances.top10 = echarts.init(document.getElementById('chart-top10'), null, { renderer:'svg' });
+    chartInstances.top10.setOption({
+      ...common(),
+      grid:{ left:120, right:40, top:40, bottom:40, containLabel:true },
+      legend:{ data:TOP10_COMPARE.series.map(s => s.name), textStyle:{ color:tc() }, top:0 },
+      tooltip:{ trigger:'axis', axisPointer:{ type:'shadow' },
+        formatter:(params) => {
+          const stock = params[0].axisValueLabel;
+          const lines = params.map(p => `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${p.color};margin-right:6px;"></span>${p.seriesName}: <b>${p.value==null?'—':p.value.toFixed(2)+'%'}</b>`);
+          return `<b>${stock}</b><br/>` + lines.join('<br/>');
         }
-      }]
-    });
-
-    // -- Timeseries (알테오젠)
-    chartInstances.timeseries = echarts.init(document.getElementById('chart-timeseries'), null, { renderer: 'svg' });
-    chartInstances.timeseries.setOption({
-      ...commonChartOpts(),
-      grid: { left: 50, right: 100, top: 60, bottom: 40, containLabel: true },
-      tooltip: { trigger: 'axis', valueFormatter: v => v.toFixed(2) + '%' },
-      xAxis: { type: 'category', data: TIMESERIES.dates, axisLabel: { color: baseSoftColor() }, axisLine: { lineStyle: { color: baseGridColor() } } },
-      yAxis: { type: 'value', name: '비중(%)', axisLabel: { formatter: '{value}%', color: baseSoftColor() }, splitLine: { lineStyle: { color: baseGridColor() } }, nameTextStyle: { color: baseSoftColor() } },
-      series: [{
-        name: '알테오젠 (KODEX)',
-        type: 'line',
-        data: TIMESERIES.alteogen_kodex,
-        smooth: true,
-        lineStyle: { width: 3, color: TOKENS.etf_series.KODEX },
-        itemStyle: { color: TOKENS.etf_series.KODEX },
-        symbolSize: 12,
-        label: { show: true, position: 'top', formatter: '{c}%', color: baseTextColor() },
-        areaStyle: {
-          color: {
-            type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-            colorStops: [
-              { offset: 0, color: 'rgba(79,140,255,0.35)' },
-              { offset: 1, color: 'rgba(79,140,255,0.02)' }
-            ]
-          }
-        },
-        markLine: {
-          symbol: 'none',
-          data: [{ xAxis: '2026-01-14', label: { formatter: '코스피 이전 의결\n(2025-12-08)', color: TOKENS.category.out, position: 'insideEndTop' }, lineStyle: { color: TOKENS.category.out, type: 'dashed' } }]
-        },
-        markPoint: {
-          data: [
-            { coord: [0, 7.50], value: '+2.99%p (6m)', symbol: 'circle', symbolSize: 1, label: { color: TOKENS.category.in, position: 'top', fontWeight: 700 } }
-          ]
-        }
-      }]
-    });
-
-    // -- Classification donut
-    chartInstances.classification = echarts.init(document.getElementById('chart-classification'), null, { renderer: 'svg' });
-    chartInstances.classification.setOption({
-      ...commonChartOpts(),
-      tooltip: { trigger: 'item', formatter: '{b}: {c} 건 ({d}%)' },
-      legend: { orient: 'vertical', left: 10, top: 'center', textStyle: { color: baseTextColor() } },
-      series: [{
-        type: 'pie',
-        radius: ['45%', '72%'],
-        center: ['62%', '50%'],
-        avoidLabelOverlap: true,
-        label: { show: true, formatter: '{b}\n{c}건', color: baseTextColor() },
-        labelLine: { show: true, lineStyle: { color: baseSoftColor() } },
-        data: [
-          { value: 1, name: '증액 (Increased)', itemStyle: { color: TOKENS.category.in } },
-          { value: 7, name: '분류 불가 (Data N/A)', itemStyle: { color: TOKENS.category.hold } }
-        ]
-      }]
-    });
-
-    // -- Heatmap
-    const heatmapData = [];
-    HEATMAP.values.forEach((row, i) => row.forEach((val, j) => heatmapData.push([j, i, val])));
-    chartInstances.heatmap = echarts.init(document.getElementById('chart-heatmap'), null, { renderer: 'svg' });
-    chartInstances.heatmap.setOption({
-      ...commonChartOpts(),
-      tooltip: { position: 'top', formatter: (p) => `${HEATMAP.rows[p.value[1]]} × ${HEATMAP.cols[p.value[0]]}<br/><b>${p.value[2].toFixed(2)}%</b>` },
-      grid: { left: 80, right: 40, top: 60, bottom: 60, containLabel: true },
-      xAxis: { type: 'category', data: HEATMAP.cols, splitArea: { show: true }, axisLabel: { color: baseSoftColor(), fontSize: 11, interval: 0, rotate: 0 } },
-      yAxis: { type: 'category', data: HEATMAP.rows, splitArea: { show: true }, axisLabel: { color: baseTextColor(), fontWeight: 700 } },
-      visualMap: {
-        min: 0, max: 27,
-        calculable: true, orient: 'horizontal', left: 'center', bottom: 0,
-        textStyle: { color: baseSoftColor() },
-        inRange: { color: ['rgba(79,140,255,0.05)', TOKENS.etf_series.KODEX, '#0B3D91'] }
       },
-      series: [{
-        type: 'heatmap',
-        data: heatmapData,
-        label: { show: true, formatter: (p) => p.value[2].toFixed(1) + '%', color: '#fff', fontWeight: 700 },
-        emphasis: { itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.5)' } }
+      xAxis:{ type:'value', name:'비중(%)', axisLabel:{ formatter:'{value}%', color:ts() }, splitLine:{ lineStyle:{ color:tg() } }, nameTextStyle:{ color:ts() } },
+      yAxis:{ type:'category', data:[...TOP10_COMPARE.categories].reverse(), axisLabel:{ color:tc(), fontSize:13 }, axisLine:{ lineStyle:{ color:tg() } } },
+      series:TOP10_COMPARE.series.map(s => ({
+        name:s.name, type:'bar', data:[...s.data].reverse(),
+        itemStyle:{ color:s.color, borderRadius:[0,4,4,0] }, barWidth:10, connectNulls:false
+      }))
+    });
+
+    // Spread
+    chartInstances.spread = echarts.init(document.getElementById('chart-spread'), null, { renderer:'svg' });
+    chartInstances.spread.setOption({
+      ...common(),
+      grid:{ left:120, right:60, top:20, bottom:40, containLabel:true },
+      tooltip:{ trigger:'axis', axisPointer:{ type:'shadow' }, valueFormatter:v => v.toFixed(2) + ' %p' },
+      xAxis:{ type:'value', name:'스프레드 (%p)', axisLabel:{ color:ts() }, splitLine:{ lineStyle:{ color:tg() } }, nameTextStyle:{ color:ts() } },
+      yAxis:{ type:'category', data:[...SPREAD_DATA.map(d => d.name)].reverse(), axisLabel:{ color:tc() }, axisLine:{ lineStyle:{ color:tg() } } },
+      series:[{
+        type:'bar', barWidth:16,
+        data:[...SPREAD_DATA].reverse().map(d => ({ value:d.value, itemStyle:{ color:d.color, borderRadius:[0,6,6,0] } })),
+        label:{ show:true, position:'right', formatter:'{c} %p', color:ts() },
+        markLine:{ symbol:'none', data:[{ xAxis:1.0, label:{ formatter:'유의 스프레드 ≥ 1%p', color:TOKENS.category.out, position:'end' }, lineStyle:{ color:TOKENS.category.out, type:'dashed' } }] }
       }]
     });
 
-    window.__rebuildCharts = () => {
-      Object.values(chartInstances).forEach(c => c && c.resize && c.resize());
-      // Re-apply colors that depend on theme tokens
-      initCharts(); // re-run with new CSS var values
-    };
-    window.addEventListener('resize', () => Object.values(chartInstances).forEach(c => c && c.resize()));
+    // Timeseries (알테오젠 단일)
+    chartInstances.timeseries = echarts.init(document.getElementById('chart-timeseries'), null, { renderer:'svg' });
+    chartInstances.timeseries.setOption({
+      ...common(),
+      grid:{ left:50, right:100, top:60, bottom:40, containLabel:true },
+      tooltip:{ trigger:'axis', valueFormatter:v => v.toFixed(2) + '%' },
+      xAxis:{ type:'category', data:TIMESERIES.dates, axisLabel:{ color:ts() }, axisLine:{ lineStyle:{ color:tg() } } },
+      yAxis:{ type:'value', name:'비중(%)', axisLabel:{ formatter:'{value}%', color:ts() }, splitLine:{ lineStyle:{ color:tg() } }, nameTextStyle:{ color:ts() } },
+      series:[{
+        name:'알테오젠 (KODEX)', type:'line', data:TIMESERIES.alteogen_kodex, smooth:true,
+        lineStyle:{ width:3, color:TOKENS.etf_series.KODEX }, itemStyle:{ color:TOKENS.etf_series.KODEX }, symbolSize:12,
+        label:{ show:true, position:'top', formatter:'{c}%', color:tc() },
+        areaStyle:{ color:{ type:'linear', x:0, y:0, x2:0, y2:1, colorStops:[{ offset:0, color:'rgba(79,140,255,0.35)' },{ offset:1, color:'rgba(79,140,255,0.02)' }] } },
+        markLine:{ symbol:'none', data:[{ xAxis:'2026-01-14', label:{ formatter:'코스피 이전 의결\n(2025-12-08)', color:TOKENS.category.out, position:'insideEndTop' }, lineStyle:{ color:TOKENS.category.out, type:'dashed' } }] }
+      }]
+    });
+
+    // Classification (4-way donut)
+    chartInstances.classification = echarts.init(document.getElementById('chart-classification'), null, { renderer:'svg' });
+    chartInstances.classification.setOption({
+      ...common(),
+      tooltip:{ trigger:'item', formatter:p => `${p.data.name}: ${p.data.value} 건 (${p.percent}%)<br/><span style="color:#9CA3AF;font-size:11px;">${p.data.detail}</span>` },
+      legend:{ orient:'vertical', left:10, top:'center', textStyle:{ color:tc() } },
+      series:[{
+        type:'pie', radius:['45%','72%'], center:['62%','50%'], avoidLabelOverlap:true,
+        label:{ show:true, formatter:'{b}\n{c}건', color:tc() },
+        labelLine:{ show:true, lineStyle:{ color:ts() } },
+        data:CLASSIFICATION.map(c => ({ value:c.value, name:c.name, detail:c.detail, itemStyle:{ color:c.color } }))
+      }]
+    });
+
+    // Heatmap
+    const hmData = [];
+    HEATMAP.values.forEach((row, i) => row.forEach((val, j) => hmData.push([j, i, val])));
+    chartInstances.heatmap = echarts.init(document.getElementById('chart-heatmap'), null, { renderer:'svg' });
+    chartInstances.heatmap.setOption({
+      ...common(),
+      tooltip:{ position:'top', formatter:(p) => `${HEATMAP.rows[p.value[1]]} × ${HEATMAP.cols[p.value[0]]}<br/><b>${p.value[2]==null?'—':p.value[2].toFixed(2)+'%'}</b>` },
+      grid:{ left:80, right:40, top:60, bottom:60, containLabel:true },
+      xAxis:{ type:'category', data:HEATMAP.cols, splitArea:{ show:true }, axisLabel:{ color:ts(), fontSize:11, interval:0, rotate:0 } },
+      yAxis:{ type:'category', data:HEATMAP.rows, splitArea:{ show:true }, axisLabel:{ color:tc(), fontWeight:700 } },
+      visualMap:{ min:0, max:27, calculable:true, orient:'horizontal', left:'center', bottom:0, textStyle:{ color:ts() },
+        inRange:{ color:['rgba(79,140,255,0.05)', TOKENS.etf_series.KODEX, '#0B3D91'] } },
+      series:[{
+        type:'heatmap', data:hmData,
+        label:{ show:true, formatter:(p) => p.value[2]==null?'—':p.value[2].toFixed(1)+'%', color:'#fff', fontWeight:700 },
+        emphasis:{ itemStyle:{ shadowBlur:10, shadowColor:'rgba(0,0,0,0.5)' } }
+      }]
+    });
+
+    // Inout diverging bar
+    chartInstances.inout = echarts.init(document.getElementById('chart-inout'), null, { renderer:'svg' });
+    const labels = INOUT_BUCKETS.map(b => b.label);
+    chartInstances.inout.setOption({
+      ...common(),
+      grid:{ left:120, right:40, top:40, bottom:40, containLabel:true },
+      legend:{ data:['편입','편출'], textStyle:{ color:tc() }, top:0 },
+      tooltip:{ trigger:'axis', axisPointer:{ type:'shadow' },
+        formatter:(params) => {
+          const i = params[0].dataIndex;
+          const b = INOUT_BUCKETS[i];
+          return `<b>${b.label}</b><br/>
+            <span style="color:${TOKENS.category.in};">■ 편입 ${b.included}</span> ${b.included_items.length?('<br/><span style="font-size:11px;color:#9CA3AF;">' + b.included_items.join(', ') + '</span>'):''}
+            <br/>
+            <span style="color:${TOKENS.category.out};">■ 편출 ${b.excluded}</span> ${b.excluded_items.length?('<br/><span style="font-size:11px;color:#9CA3AF;">' + b.excluded_items.join(', ') + '</span>'):''}`;
+        }
+      },
+      xAxis:{ type:'value', name:'종목 수', axisLabel:{ color:ts() }, splitLine:{ lineStyle:{ color:tg() } }, nameTextStyle:{ color:ts() } },
+      yAxis:{ type:'category', data:labels, axisLabel:{ color:tc() }, axisLine:{ lineStyle:{ color:tg() } } },
+      series:[
+        { name:'편출', type:'bar', stack:'total', data:INOUT_BUCKETS.map(b => -b.excluded),
+          itemStyle:{ color:TOKENS.category.out, borderRadius:[6,0,0,6] }, barWidth:22,
+          label:{ show:true, position:'left', formatter:p => Math.abs(p.value), color:TOKENS.category.out, fontWeight:700 } },
+        { name:'편입', type:'bar', stack:'total', data:INOUT_BUCKETS.map(b => b.included),
+          itemStyle:{ color:TOKENS.category.in, borderRadius:[0,6,6,0] }, barWidth:22,
+          label:{ show:true, position:'right', formatter:p => p.value, color:TOKENS.category.in, fontWeight:700 } }
+      ]
+    });
+
+    window.__rebuildCharts = () => { initCharts(); };
+    window.addEventListener('resize', () => Object.values(chartInstances).forEach(c => c && c.resize && c.resize()));
   }
 
-  // ====================================================================
-  // INIT
-  // ====================================================================
+  // ==================== INIT ====================
   document.addEventListener('DOMContentLoaded', () => {
+    renderKpiHero();
     renderEtfDetail('KODEX');
+    renderHoldingsTable();
     renderRebalance();
     renderInsights();
+    renderContext();
+    renderLimitations();
+    renderPlaceholderSeries();
     renderSources();
 
     const tablist = document.getElementById('etf-tablist');
@@ -1154,12 +1123,8 @@
       renderEtfDetail(btn.dataset.etf);
     });
 
-    if (typeof echarts !== 'undefined') {
-      initCharts();
-    } else {
-      // Retry shortly in case CDN defer
-      setTimeout(() => { if (typeof echarts !== 'undefined') initCharts(); else initCharts(); }, 600);
-    }
+    if (typeof echarts !== 'undefined') initCharts();
+    else setTimeout(() => initCharts(), 600);
   });
   </script>
 </body>
