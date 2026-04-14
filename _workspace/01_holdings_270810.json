@@ -1,0 +1,92 @@
+{
+  "etf_code": "270810",
+  "etf_name": "RISE 코스닥150",
+  "asset_manager": "KB자산운용",
+  "as_of_dates": ["2025-10-14", "2026-01-14", "2026-04-14"],
+  "data_notes": [
+    "2026-04-14 상위 10개 비중은 RISE ETF 공식 PDP에서 직접 수집 (최신 CU 기준)",
+    "2025-10-14 / 2026-01-14 시점 상세 비중은 PDP 상 과거 공시 PDF 미노출로 N/A. 지수 추종 특성상 KODEX/TIGER와 동조",
+    "RISE는 총보수 0.02%로 Top3 중 최저. 보수 민감 투자자의 관심이 높음"
+  ],
+  "holdings": [
+    {
+      "ticker": "196170",
+      "name": "알테오젠",
+      "sector": "바이오/헬스케어",
+      "weights": ["N/A", "N/A", 6.99],
+      "weight_change_pct": "N/A",
+      "rank_latest": 1,
+      "notes": "KODEX 10.49% 대비 RISE 6.99% — 같은 지수 추종이지만 RISE 집계 시점·방식 차이 가능성. 원문 수치 그대로 기록"
+    },
+    {
+      "ticker": "086520",
+      "name": "에코프로",
+      "sector": "2차전지/소재",
+      "weights": ["N/A", "N/A", 6.85],
+      "rank_latest": 2
+    },
+    {
+      "ticker": "247540",
+      "name": "에코프로비엠",
+      "sector": "2차전지/양극재",
+      "weights": ["N/A", "N/A", 5.23],
+      "rank_latest": 3
+    },
+    {
+      "ticker": "000250",
+      "name": "삼천당제약",
+      "sector": "바이오/헬스케어",
+      "weights": ["N/A", "N/A", 3.56],
+      "rank_latest": 4
+    },
+    {
+      "ticker": "028300",
+      "name": "HLB",
+      "sector": "바이오/헬스케어",
+      "weights": ["N/A", "N/A", 3.33],
+      "rank_latest": 5
+    },
+    {
+      "ticker": "298380",
+      "name": "에이비엘바이오",
+      "sector": "바이오/헬스케어",
+      "weights": ["N/A", "N/A", 3.11],
+      "rank_latest": 6
+    },
+    {
+      "ticker": "087010",
+      "name": "펩트론",
+      "sector": "바이오/헬스케어",
+      "weights": ["N/A", "N/A", 2.74],
+      "rank_latest": 7
+    },
+    {
+      "ticker": "058470",
+      "name": "리노공업",
+      "sector": "반도체장비",
+      "weights": ["N/A", "N/A", 2.73],
+      "rank_latest": 8
+    },
+    {
+      "ticker": "141080",
+      "name": "리가켐바이오",
+      "sector": "바이오/헬스케어",
+      "weights": ["N/A", "N/A", 2.35],
+      "rank_latest": 9
+    },
+    {
+      "ticker": "277810",
+      "name": "레인보우로보틱스",
+      "sector": "로봇",
+      "weights": ["N/A", "N/A", 2.22],
+      "rank_latest": 10
+    }
+  ],
+  "rebalancing_events": [
+    {
+      "date": "2025-12-12",
+      "type": "정기변경",
+      "note": "지수 기반 ETF이므로 KODEX와 동일 편입·편출 적용 (01_holdings_229200.json 참조)"
+    }
+  ]
+}

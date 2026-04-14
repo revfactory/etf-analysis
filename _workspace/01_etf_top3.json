@@ -1,0 +1,45 @@
+{
+  "collected_at": "2026-04-14",
+  "ranking_basis": "AUM",
+  "universe": "KOSDAQ, 순방향 지수추종(레버리지/인버스 제외)",
+  "notes": "AUM 기준일 2026-04-13. 코스닥150 지수 추종 ETF 중 상위 3개. 코스닥 액티브 ETF(KoAct/TIME 등)는 2026-03-10 상장 신생 상품으로 AUM 규모가 Top3 진입에 미달하여 제외.",
+  "etfs": [
+    {
+      "code": "229200",
+      "name": "KODEX 코스닥150",
+      "asset_manager": "삼성자산운용",
+      "underlying_index": "코스닥150",
+      "aum_krw_bn": 6517.6,
+      "aum_rank": 1,
+      "listed_at": "2015-10-01",
+      "expense_ratio_pct": 0.25,
+      "aum_ref_date": "2026-04-13",
+      "source_grade": "A"
+    },
+    {
+      "code": "232080",
+      "name": "TIGER 코스닥150",
+      "asset_manager": "미래에셋자산운용",
+      "underlying_index": "코스닥150",
+      "aum_krw_bn": 2115.1,
+      "aum_rank": 2,
+      "listed_at": "2015-11-12",
+      "expense_ratio_pct": 0.19,
+      "aum_ref_date": "2026-04-13",
+      "source_grade": "A"
+    },
+    {
+      "code": "270810",
+      "name": "RISE 코스닥150",
+      "asset_manager": "KB자산운용",
+      "underlying_index": "코스닥150",
+      "aum_krw_bn": 481.7,
+      "aum_rank": 3,
+      "listed_at": "2017-06-16",
+      "expense_ratio_pct": 0.02,
+      "aum_ref_date": "2026-04-13",
+      "source_grade": "A",
+      "notes": "구 KBSTAR 코스닥150, 2024년 브랜드 리뉴얼로 RISE로 변경"
+    }
+  ]
+}

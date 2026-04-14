@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>코스닥 ETF 포트폴리오 리포트</title>
+<link rel="stylesheet" href="pdf_build/template.css" />
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+  /* 페이지별 약간의 조정 */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10pt; }
+  .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8pt; }
+  .etf-card { border: 1pt solid var(--line); border-radius: 4pt; padding: 8pt 10pt; }
+  .etf-card.e1 { border-top: 3pt solid var(--etf1); }
+  .etf-card.e2 { border-top: 3pt solid var(--etf2); }
+  .etf-card.e3 { border-top: 3pt solid var(--etf3); }
+  .etf-card .name { font-size: 12pt; font-weight: 700; color: var(--navy); }
+  .etf-card .ticker { font-size: 9pt; color: var(--muted); font-family: 'SF Mono', monospace; }
+  .metric-row { display: grid; grid-template-columns: 1.1fr 1fr 1fr 1fr; gap: 8pt; margin-top: 4pt; }
+  .metric-row .cell { font-size: 9pt; }
+  .metric-row .cell .lbl { color: var(--muted); font-size: 8pt; }
+  .metric-row .cell .val { font-weight: 600; color: var(--ink); font-size: 10.5pt; font-variant-numeric: tabular-nums; }
+  .evidence-block { border-left: 3pt solid var(--navy); background: #F7F9FD; padding: 6pt 10pt; margin: 4pt 0; font-size: 9.5pt; }
+  .hypothesis-block { border-left: 3pt dashed var(--amber); background: #FEF9EF; padding: 6pt 10pt; margin: 4pt 0; font-size: 9.5pt; }
+  .hypothesis-block .label { display: inline-block; font-size: 7.5pt; color: #A6650A; background: #FEF3E0; padding: 1pt 5pt; border-radius: 8pt; margin-right: 4pt; font-weight: 600; }
+  .evidence-block .label { display: inline-block; font-size: 7.5pt; color: var(--navy); background: var(--table-head); padding: 1pt 5pt; border-radius: 8pt; margin-right: 4pt; font-weight: 600; }
+  .rebal-table { display: grid; grid-template-columns: 1fr 1fr; gap: 10pt; }
+  .rebal-table .col h4 { margin: 0 0 4pt 0; }
+  .rebal-table ul { margin: 0; padding-left: 16pt; font-size: 9pt; line-height: 1.6; }
+  .limits ol { padding-left: 16pt; margin: 0; font-size: 9.5pt; line-height: 1.7; }
+  .oneliner { font-size: 13pt; font-weight: 700; color: var(--navy); line-height: 1.5; padding: 14pt 16pt; background: linear-gradient(135deg, #F7F9FD 0%, #FEF9EF 100%); border-radius: 6pt; margin: 12pt 0; border: 1pt solid var(--line); }
+  .oneliner::before { content: "“"; font-size: 24pt; color: var(--primary); line-height: 0; vertical-align: -6pt; margin-right: 4pt; }
+  .oneliner::after { content: "”"; font-size: 24pt; color: var(--primary); line-height: 0; vertical-align: -6pt; margin-left: 4pt; }
+  .small-table { font-size: 9pt; }
+  .small-table td, .small-table th { padding: 3pt 6pt; }
+  .toc ol { font-size: 10.5pt; padding-left: 20pt; line-height: 1.9; }
+  .toc ol li { color: var(--ink); }
+  .toc ol li a { text-decoration: none; color: var(--ink); }
+  .toc ol li .pg { color: var(--muted); float: right; }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER -->
+<section class="page cover">
+  <div>
+    <div class="brand">KOSDAQ ETF PORTFOLIO REPORT</div>
+    <div class="accent-bar"></div>
+    <h1 class="title">코스닥 ETF<br/>포트폴리오 분석</h1>
+    <div class="subtitle">상위 3개 펀드의 피투자사 구성과 비중 변화 시계열</div>
+  </div>
+  <div>
+    <div class="oneliner" style="margin-top:0">
+      코스닥150 ETF 셋은 티커는 같지만 숫자는 달랐다. 그리고 셋 모두 알테오젠 하나에 약 10%를 걸고 있다 — 2026년 코스피 이전 이벤트는 3개 상품 전부를 동시에 흔들 수 있는 단일 최대 리스크다.
+    </div>
+    <div class="meta" style="margin-top:12pt">
+      <strong>발행일</strong> 2026-04-14<br/>
+      <strong>데이터 기준일</strong> 2026-04-14 (현재) · 2026-01-14 (3M) · 2025-10-14 (6M)<br/>
+      <strong>대상 유니버스</strong> KOSDAQ · AUM 상위 3종 (레버리지/인버스 제외)<br/>
+      <strong>작성</strong> kosdaq-etf-team · pdf-author
+    </div>
+  </div>
+</section>
+
+<!-- PAGE 2: EXECUTIVE SUMMARY -->
+<section class="page">
+  <h2>Executive Summary</h2>
+
+  <div class="kpi-grid">
+    <div class="kpi"><div class="label">Top 3 합산 AUM</div><div class="value">9,114 억원</div><div class="delta up">2026-02 전월比 4~6배 급증</div></div>
+    <div class="kpi"><div class="label">공통 편입 종목</div><div class="value">8 종</div><div class="delta">상위 10 중 단독편입 0</div></div>
+    <div class="kpi"><div class="label">알테오젠 비중 (KODEX)</div><div class="value">10.49%</div><div class="delta up">6M +2.99%p</div></div>
+    <div class="kpi"><div class="label">최대 크로스 ETF 스프레드</div><div class="value">3.51 %p</div><div class="delta down">알테오젠 (KODEX vs RISE)</div></div>
+  </div>
+
+  <div class="summary-lead">
+    2026-04-14 기준 코스닥 ETF Top 3(KODEX·TIGER·RISE 코스닥150)는 <strong>동일 지수 추종</strong>이지만 개별 비중에서 유의미한 편차를 보였다.
+    6개월간 유일하게 정량 확정된 비중 변화는 <strong>알테오젠 +2.99%p 증액</strong>(KODEX 기준)이며, 나머지 상위 종목 시계열은 원천 자료 제약으로 N/A 처리되었다.
+    2025-12-12 지수 정기변경에서 <strong>로봇·바이오 16종이 편입되고 반도체 부품·소비재 16종이 편출</strong>되어, 지수의 섹터 주연이 "바이오+로봇" 투 트랙으로 이동했다.
+    가장 큰 리스크는 알테오젠의 코스피 이전 이벤트 — 3개 ETF 합산 약 <strong>10% 비중</strong>에 영향을 주어 동시 수급 재편이 불가피할 전망이다.
+  </div>
+
+  <h3>Key Findings</h3>
+  <ul style="margin:0;padding-left:18pt;font-size:10.5pt;line-height:1.7">
+    <li><strong>알테오젠 단일 종목이 지수 성과의 압력계.</strong> KODEX 10.49%, TIGER 10.5%, RISE 6.99% — 세 ETF 중 최대 스프레드 3.51%p.</li>
+    <li><strong>바이오 쏠림은 구조적.</strong> 상위 종목 섹터 비중 기준 KODEX 23.93% / TIGER 26.90% / RISE 22.08%.</li>
+    <li><strong>분산도는 RISE가 최고.</strong> Effective N — KODEX 6.18 &lt; TIGER 7.66 &lt; <strong>RISE 8.41</strong>.</li>
+    <li><strong>같은 이름, 다른 숫자.</strong> 공통 티커 8종, 단독편입 0건, 그러나 비중 ≥1%p 스프레드가 알테오젠·에이비엘바이오·에코프로 3종에서 관측.</li>
+    <li><strong>자금은 실적이 아닌 기대를 따랐다.</strong> 2026-02 KODEX 약 4배·TIGER 약 6배 AUM 급증 후 현 수준에 안착 [가설].</li>
+  </ul>
+  <p class="src-note">자료: 금융투자협회 · KRX · 운용사 공시 / 기준일: 2026-04-14 (AUM 2026-04-13)</p>
+</section>
+
+<!-- PAGE 3: MARKET OVERVIEW -->
+<section class="page">
+  <h2>시장 개관 — 코스닥 ETF Top 3</h2>
+  <p>본 보고서가 다루는 3종은 모두 <strong>코스닥150 지수</strong>를 순방향 추종한다(레버리지/인버스 제외). 코스닥 액티브 ETF(KoAct/TIME 시리즈)는 2026-03-10 상장 신상품으로 AUM Top 3 진입에 미달하여 제외.</p>
+
+  <table>
+    <thead><tr>
+      <th>구분</th><th>KODEX 코스닥150</th><th>TIGER 코스닥150</th><th>RISE 코스닥150</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>코드</td><td>229200</td><td>232080</td><td>270810</td></tr>
+      <tr><td>운용사</td><td>삼성자산운용</td><td>미래에셋자산운용</td><td>KB자산운용</td></tr>
+      <tr><td>상장일</td><td>2015-10-01</td><td>2015-11-12</td><td>2017-06-16</td></tr>
+      <tr><td class="num">AUM (2026-04-13)</td><td class="num">6,517.6 억원</td><td class="num">2,115.1 억원</td><td class="num">481.7 억원</td></tr>
+      <tr><td class="num">보수율</td><td class="num">0.25%</td><td class="num">0.19%</td><td class="num">0.02%</td></tr>
+      <tr><td>AUM 순위</td><td><span class="tag">#1</span></td><td><span class="tag mint">#2</span></td><td><span class="tag amber">#3</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>AUM 규모 비교</h3>
+  <div id="chart-aum" class="chart-wide"></div>
+  <p class="chart-caption">자료: 금융투자협회 · 각 운용사 / 기준일: 2026-04-13</p>
+
+  <div class="insight">
+    <h4>구조적 특징</h4>
+    <p><strong>KODEX가 전체 AUM의 71.5%</strong> 를 점유하고 있으며, RISE는 <strong>보수율 0.02%</strong> 로 셋 중 최저 — 보수 민감·장기보유 투자자의 대안이 될 수 있다 [가설].</p>
+  </div>
+</section>
+
+<!-- PAGE 4-6: ETF PROFILES x3 -->
+<section class="page">
+  <h2>ETF 프로파일 — KODEX 코스닥150</h2>
+  <div class="profile-head">
+    <div><span style="font-size:14pt;font-weight:700;color:var(--navy)">KODEX 코스닥150</span> <span class="ticker">229200 · 삼성자산운용</span></div>
+    <div><span class="tag">AUM #1</span><span class="tag">기초 코스닥150</span></div>
+  </div>
+  <div class="etf-card e1">
+    <div class="metric-row">
+      <div class="cell"><div class="lbl">AUM (억원)</div><div class="val">6,517.6</div></div>
+      <div class="cell"><div class="lbl">Top10 집중도</div><div class="val">36.93%*</div></div>
+      <div class="cell"><div class="lbl">섹터 HHI (상위버킷)</div><div class="val">635.9</div></div>
+      <div class="cell"><div class="lbl">Effective N</div><div class="val">6.18</div></div>
+    </div>
+    <p class="src-note">* 공개 상위 8종목 합(9~10위 N/A). 수치는 섹터 HHI·Effective N 모두 상위 공개 버킷 기준.</p>
+  </div>
+
+  <h3>상위 종목 비중 (공개 상위 8종)</h3>
+  <table class="small-table">
+    <thead><tr><th>#</th><th>종목</th><th>티커</th><th class="num">비중</th><th>섹터</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>알테오젠</td><td>196170</td><td class="num">10.49%</td><td>바이오/헬스케어</td></tr>
+      <tr><td>2</td><td>에코프로</td><td>086520</td><td class="num">5.70%</td><td>2차전지/소재</td></tr>
+      <tr><td>3</td><td>에코프로비엠</td><td>247540</td><td class="num">5.09%</td><td>2차전지/양극재</td></tr>
+      <tr><td>4</td><td>에이비엘바이오</td><td>298380</td><td class="num">4.60%</td><td>바이오/헬스케어</td></tr>
+      <tr><td>5</td><td>HLB</td><td>028300</td><td class="num">3.24%</td><td>바이오/헬스케어</td></tr>
+      <tr><td>6</td><td>펩트론</td><td>087010</td><td class="num">2.95%</td><td>바이오/헬스케어</td></tr>
+      <tr><td>7</td><td>리가켐바이오</td><td>141080</td><td class="num">2.65%</td><td>바이오/헬스케어</td></tr>
+      <tr><td>8</td><td>레인보우로보틱스</td><td>277810</td><td class="num">2.21%</td><td>로봇</td></tr>
+    </tbody>
+  </table>
+
+  <h3>섹터 분포 (상위 공개 종목 기준)</h3>
+  <table class="small-table">
+    <thead><tr><th>섹터</th><th class="num">비중</th></tr></thead>
+    <tbody>
+      <tr><td>바이오/헬스케어</td><td class="num">23.93%</td></tr>
+      <tr><td>2차전지/소재</td><td class="num">5.70%</td></tr>
+      <tr><td>2차전지/양극재</td><td class="num">5.09%</td></tr>
+      <tr><td>로봇</td><td class="num">2.21%</td></tr>
+    </tbody>
+  </table>
+  <p class="src-note">자료: 운용사 월간 공시 / 기준일: 2026-04-14 / 바이오/헬스케어 단일 섹터가 HHI의 약 90% 설명.</p>
+</section>
+
+<section class="page">
+  <h2>ETF 프로파일 — TIGER 코스닥150</h2>
+  <div class="profile-head">
+    <div><span style="font-size:14pt;font-weight:700;color:var(--navy)">TIGER 코스닥150</span> <span class="ticker">232080 · 미래에셋자산운용</span></div>
+    <div><span class="tag mint">AUM #2</span><span class="tag mint">기초 코스닥150</span></div>
+  </div>
+  <div class="etf-card e2">
+    <div class="metric-row">
+      <div class="cell"><div class="lbl">AUM (억원)</div><div class="val">2,115.1</div></div>
+      <div class="cell"><div class="lbl">Top10 집중도</div><div class="val">42.60%</div></div>
+      <div class="cell"><div class="lbl">섹터 HHI (상위버킷)</div><div class="val">794.2</div></div>
+      <div class="cell"><div class="lbl">Effective N</div><div class="val">7.66</div></div>
+    </div>
+    <p class="src-note">TIGER 개별 종목 비중은 지수 기반 추정치(±0.2%p 오차) — 정확도는 KODEX/RISE보다 낮음.</p>
+  </div>
+
+  <h3>상위 10 종목 비중 (추정치 포함)</h3>
+  <table class="small-table">
+    <thead><tr><th>#</th><th>종목</th><th>티커</th><th class="num">비중</th><th>섹터</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>알테오젠</td><td>196170</td><td class="num">10.50%</td><td>바이오/헬스케어</td></tr>
+      <tr><td>2</td><td>에코프로</td><td>086520</td><td class="num">5.70%</td><td>2차전지/소재</td></tr>
+      <tr><td>3</td><td>에코프로비엠</td><td>247540</td><td class="num">5.10%</td><td>2차전지/양극재</td></tr>
+      <tr><td>4</td><td>에이비엘바이오</td><td>298380</td><td class="num">4.60%</td><td>바이오/헬스케어</td></tr>
+      <tr><td>5</td><td>HLB</td><td>028300</td><td class="num">3.20%</td><td>바이오/헬스케어</td></tr>
+      <tr><td>6</td><td>펩트론</td><td>087010</td><td class="num">3.00%</td><td>바이오/헬스케어</td></tr>
+      <tr><td>7</td><td>삼천당제약</td><td>000250</td><td class="num">3.00%</td><td>바이오/헬스케어</td></tr>
+      <tr><td>8</td><td>리노공업</td><td>058470</td><td class="num">2.70%</td><td>반도체장비</td></tr>
+      <tr><td>9</td><td>리가켐바이오</td><td>141080</td><td class="num">2.60%</td><td>바이오/헬스케어</td></tr>
+      <tr><td>10</td><td>레인보우로보틱스</td><td>277810</td><td class="num">2.20%</td><td>로봇</td></tr>
+    </tbody>
+  </table>
+
+  <div class="insight">
+    <h4>특징</h4>
+    <p>TIGER는 Top10 집중도가 <strong>42.60%</strong>로 세 ETF 중 가장 높지만, 동시에 <strong>반도체장비(리노공업 2.70%)</strong> 를 명시 포함하며 바이오 편중을 일부 희석한다. 섹터 HHI 794.2는 바이오 비중이 26.90%로 셋 중 가장 높기 때문.</p>
+  </div>
+</section>
+
+<section class="page">
+  <h2>ETF 프로파일 — RISE 코스닥150</h2>
+  <div class="profile-head">
+    <div><span style="font-size:14pt;font-weight:700;color:var(--navy)">RISE 코스닥150</span> <span class="ticker">270810 · KB자산운용</span></div>
+    <div><span class="tag amber">AUM #3</span><span class="tag amber">최저 보수 0.02%</span></div>
+  </div>
+  <div class="etf-card e3">
+    <div class="metric-row">
+      <div class="cell"><div class="lbl">AUM (억원)</div><div class="val">481.7</div></div>
+      <div class="cell"><div class="lbl">Top10 집중도</div><div class="val">39.11%</div></div>
+      <div class="cell"><div class="lbl">섹터 HHI (상위버킷)</div><div class="val">574.2</div></div>
+      <div class="cell"><div class="lbl">Effective N</div><div class="val">8.41</div></div>
+    </div>
+    <p class="src-note">구 KBSTAR 코스닥150 (2024년 브랜드 리뉴얼). Top10은 공식 PDP 수집치 합계.</p>
+  </div>
+
+  <h3>상위 10 종목 비중</h3>
+  <table class="small-table">
+    <thead><tr><th>#</th><th>종목</th><th>티커</th><th class="num">비중</th><th>섹터</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>알테오젠</td><td>196170</td><td class="num">6.99%</td><td>바이오/헬스케어</td></tr>
+      <tr><td>2</td><td>에코프로</td><td>086520</td><td class="num">6.85%</td><td>2차전지/소재</td></tr>
+      <tr><td>3</td><td>에코프로비엠</td><td>247540</td><td class="num">5.23%</td><td>2차전지/양극재</td></tr>
+      <tr><td>4</td><td>삼천당제약</td><td>000250</td><td class="num">3.56%</td><td>바이오/헬스케어</td></tr>
+      <tr><td>5</td><td>HLB</td><td>028300</td><td class="num">3.33%</td><td>바이오/헬스케어</td></tr>
+      <tr><td>6</td><td>에이비엘바이오</td><td>298380</td><td class="num">3.11%</td><td>바이오/헬스케어</td></tr>
+      <tr><td>7</td><td>펩트론</td><td>087010</td><td class="num">2.74%</td><td>바이오/헬스케어</td></tr>
+      <tr><td>8</td><td>리노공업</td><td>058470</td><td class="num">2.73%</td><td>반도체장비</td></tr>
+      <tr><td>9</td><td>리가켐바이오</td><td>141080</td><td class="num">2.35%</td><td>바이오/헬스케어</td></tr>
+      <tr><td>10</td><td>레인보우로보틱스</td><td>277810</td><td class="num">2.22%</td><td>로봇</td></tr>
+    </tbody>
+  </table>
+
+  <div class="insight">
+    <h4>특징</h4>
+    <p>RISE는 Effective N <strong>8.41</strong>로 셋 중 가장 분산적이며, 알테오젠 비중이 <strong>6.99%</strong>로 KODEX·TIGER(≈10.5%) 대비 낮다. 이는 보수 0.02%와 함께 <strong>분산 선호·장기 투자자</strong>에 적합한 특성을 만든다 [가설]. 단, KODEX 대비 알테오젠 스프레드 3.51%p는 집계 시점·CU 차이 가능성이 제기되어 교차 검증이 권장된다.</p>
+  </div>
+</section>
+
+<!-- PAGE 7: HOLDINGS CHANGE - CROSS ETF SPREAD -->
+<section class="page">
+  <h2>종목 비중 변화 분석 (1) — 크로스 ETF 스프레드</h2>
+  <p>동일 지수를 추종하지만 공시 시점·CU 단위 차이로 실제 비중은 최대 <strong>3.51%p</strong>까지 벌어진다.</p>
+
+  <div id="chart-spread" class="chart-wide"></div>
+  <p class="chart-caption">자료: 각 운용사 공시 / 기준일: 2026-04-14</p>
+
+  <h3>ETF별 상위 10 종목 비중 비교</h3>
+  <div id="chart-top10" class="chart-wide"></div>
+  <p class="chart-caption">자료: 각 운용사 공시 / 기준일: 2026-04-14 · TIGER는 지수 기반 추정치(±0.2%p)</p>
+</section>
+
+<!-- PAGE 8: TIMESERIES -->
+<section class="page">
+  <h2>종목 비중 변화 분석 (2) — 알테오젠 시계열</h2>
+  <p>유일하게 3시점(6M·3M·현재) 비중이 확보된 종목. 나머지 상위 종목은 운용사 월간 PDF 과거 아카이브 접근 제한으로 <strong>N/A</strong> 처리되어 시계열 분석이 불가하다.</p>
+
+  <div id="chart-timeseries" class="chart-wide"></div>
+  <p class="chart-caption">자료: KODEX 월간 공시 · 언론 인용치 / 기준일: 2026-04-14</p>
+
+  <h3>알테오젠(196170) 비중 변화 분류</h3>
+  <table class="small-table">
+    <thead><tr><th>기간</th><th class="num">2025-10-14</th><th class="num">2026-01-14</th><th class="num">2026-04-14</th><th class="num">6M Δ</th><th class="num">3M Δ</th><th>분류</th></tr></thead>
+    <tbody>
+      <tr><td>KODEX 비중</td><td class="num">7.50%</td><td class="num">11.00%</td><td class="num">10.49%</td><td class="num pos">+2.99%p</td><td class="num neg">-0.51%p</td><td><span class="tag emerald">증액 (Increased)</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="evidence-block">
+    <span class="label">정량 근거</span>
+    6개월 누적 +2.99%p 로 증액 임계치(≥+0.5%p)를 충족. 최근 3개월은 -0.51%p 소폭 조정. 동일 시점 TIGER 약 10.5%, RISE 6.99% — 스프레드 3.51%p(3개 ETF 공통 종목 중 최대).
+  </div>
+  <div class="hypothesis-block">
+    <span class="label">[가설]</span>
+    2025-12-08 임시주총 <strong>코스피 이전상장 의결</strong> 후 비중 고점 대비 소폭 조정. 이전 확정 시 코스닥150 구성에서 편출되어 3개 ETF 합산 약 10% 수급 재편 발생 가능 (출처: <code>01_press_229200.md</code>).
+  </div>
+</section>
+
+<!-- PAGE 9: REBALANCING -->
+<section class="page">
+  <h2>종목 비중 변화 분석 (3) — 2025-12-12 지수 정기변경</h2>
+  <p>시점별 개별 비중 원천 제약으로 직접 증감 분류는 알테오젠 1건에 그쳤다. 대신 거래소의 <strong>2025-12-12 코스닥150 정기변경</strong>(편입 16종·편출 16종)을 대리 근거로 활용한다.</p>
+
+  <div class="rebal-table">
+    <div class="col">
+      <h4>편입 16종 <span class="tag emerald" style="font-size:7.5pt">NEW</span></h4>
+      <ul>
+        <li><strong>로봇 4종:</strong> 유일로보틱스 · 유진로봇 · 로보티즈 · 클로봇</li>
+        <li><strong>바이오 3종:</strong> 디앤디파마텍 · 올릭스 · 아이쓰리시스템</li>
+        <li>펌텍코리아 · 비에이치아이 · LS마린솔루션</li>
+        <li>감성코퍼레이션 · 인카금융서비스 · 코나아이</li>
+        <li>미코 · 솔트룩스 · 우리기술</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h4>편출 16종 <span class="tag coral" style="font-size:7.5pt">REMOVED</span></h4>
+      <ul>
+        <li><strong>반도체 부품 6종:</strong> 칩스앤미디어 · 프로텍 · 아이티엠반도체 · 오픈엣지테크놀로지 · 덕산테코피아 · 기가비스</li>
+        <li><strong>소비재 4종:</strong> 매일유업 · 아이패밀리에스씨 · 인탑스 · 파트론</li>
+        <li>HLB테라퓨틱스 · 바이오니아</li>
+        <li>한국기업평가 · 아이센스 · 미래나노텍 · 이엠텍</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>섹터별 편입·편출 분포</h3>
+  <div id="chart-rebal" class="chart"></div>
+  <p class="chart-caption">자료: KRX 코스닥150 정기변경 공시 / 기준일: 2025-12-12 · 섹터 분류는 본 분석 실무 분류</p>
+
+  <div class="hypothesis-block" style="margin-top:10pt">
+    <span class="label">[가설]</span>
+    언론은 편입 종목 중 <strong>유일로보틱스·로보티즈</strong> 등 휴머노이드 로봇 테마를 강조하며, 지수가 "코스닥 = 바이오"에서 "<strong>바이오 + 로봇</strong>" 투 트랙으로 이동 중이라는 해석이 가능하다. 반대로 편출된 반도체 부품 기업들은 스마트폰 수요 둔화 국면과 맞물려 있으며, 커뮤니티 반응에서도 "체감상 코스닥 반도체가 얇아졌다"는 발화가 관측된다(대표성 주의).
+  </div>
+</section>
+
+<!-- PAGE 10: COMMON vs UNIQUE -->
+<section class="page">
+  <h2>공통 편입 vs 단독 편입</h2>
+  <p>세 ETF 모두 코스닥150 지수를 추종하므로 <strong>티커 자체의 차이는 없다</strong>. 그러나 비중 스프레드로 인해 체감되는 포트폴리오는 다를 수 있다.</p>
+
+  <h3>3개 ETF 공통 Top10 편입 종목 (8종)</h3>
+  <table>
+    <thead><tr><th>종목</th><th>티커</th><th class="num">KODEX</th><th class="num">TIGER</th><th class="num">RISE</th><th class="num">스프레드 (%p)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>알테오젠</strong></td><td>196170</td><td class="num">10.49%</td><td class="num">10.50%</td><td class="num">6.99%</td><td class="num neg">3.51</td></tr>
+      <tr><td>에코프로</td><td>086520</td><td class="num">5.70%</td><td class="num">5.70%</td><td class="num">6.85%</td><td class="num">1.15</td></tr>
+      <tr><td>에코프로비엠</td><td>247540</td><td class="num">5.09%</td><td class="num">5.10%</td><td class="num">5.23%</td><td class="num">0.14</td></tr>
+      <tr><td><strong>에이비엘바이오</strong></td><td>298380</td><td class="num">4.60%</td><td class="num">4.60%</td><td class="num">3.11%</td><td class="num neg">1.49</td></tr>
+      <tr><td>HLB</td><td>028300</td><td class="num">3.24%</td><td class="num">3.20%</td><td class="num">3.33%</td><td class="num">0.13</td></tr>
+      <tr><td>펩트론</td><td>087010</td><td class="num">2.95%</td><td class="num">3.00%</td><td class="num">2.74%</td><td class="num">0.26</td></tr>
+      <tr><td>리가켐바이오</td><td>141080</td><td class="num">2.65%</td><td class="num">2.60%</td><td class="num">2.35%</td><td class="num">0.30</td></tr>
+      <tr><td>레인보우로보틱스</td><td>277810</td><td class="num">2.21%</td><td class="num">2.20%</td><td class="num">2.22%</td><td class="num">0.02</td></tr>
+    </tbody>
+  </table>
+
+  <h3>KODEX 공개 범위 밖 (TIGER/RISE Top10에만 노출)</h3>
+  <table class="small-table">
+    <thead><tr><th>종목</th><th>티커</th><th class="num">TIGER</th><th class="num">RISE</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td>삼천당제약</td><td>000250</td><td class="num">3.00%</td><td class="num">3.56%</td><td>KODEX 9~10위권 notes 언급</td></tr>
+      <tr><td>리노공업</td><td>058470</td><td class="num">2.70%</td><td class="num">2.73%</td><td>지수 내 경계 종목</td></tr>
+    </tbody>
+  </table>
+
+  <p class="src-note">ETF별 단독 편입 종목은 0건. 공개 상세 수준 차이로 겉보기 격차가 발생한다.</p>
+</section>
+
+<!-- PAGE 11: INSIGHTS & RISKS -->
+<section class="page">
+  <h2>인사이트 &amp; 리스크</h2>
+
+  <div class="insight">
+    <h4>#1 알테오젠 — 단일 종목이 지수 성과의 압력계</h4>
+    <div class="evidence-block"><span class="label">정량</span>
+      KODEX 10.49% · TIGER 10.5% · RISE 6.99%. 단일 종목이 KODEX 바이오 섹터 비중(23.93%)의 약 <strong>44%</strong>를 차지하며 섹터 HHI의 주요 기여분.
+    </div>
+    <div class="hypothesis-block"><span class="label">[가설]</span>
+      2026년 중 코스피 이전 확정 시 코스닥150에서 편출 → 3개 ETF 합산 약 9,114억 원의 10% 내외 수급 재편이 불가피할 것으로 해석 가능.
+    </div>
+  </div>
+
+  <div class="insight">
+    <h4>#2 바이오 쏠림은 구조적, ETF별 '색깔'은 다르다</h4>
+    <div class="evidence-block"><span class="label">정량</span>
+      바이오/헬스케어 — KODEX 23.93% · TIGER 26.90% · RISE 22.08%. Effective N — KODEX 6.18 &lt; TIGER 7.66 &lt; <strong>RISE 8.41</strong>.
+    </div>
+    <div class="hypothesis-block"><span class="label">[가설]</span>
+      RISE의 상대적 분산과 최저보수(0.02%)는 <strong>보수 민감·분산 선호 투자자</strong>의 대안이 될 수 있다. TIGER는 반도체장비를 명시 포함해 바이오 편중을 부분 희석.
+    </div>
+  </div>
+
+  <div class="insight">
+    <h4>#3 지수의 섹터 주연이 바뀌었다 — 로봇·바이오 ↑ / 반도체 부품·소비재 ↓</h4>
+    <div class="evidence-block"><span class="label">정량</span>
+      2025-12-12 정기변경: 편입 16종(로봇 4, 바이오 3, 기타 9) / 편출 16종(반도체 부품 6, 소비재 4, 기타 6). 3개 ETF 동시 적용.
+    </div>
+    <div class="hypothesis-block"><span class="label">[가설]</span>
+      "코스닥 = 바이오" 서사가 "<strong>바이오 + 로봇</strong>" 투 트랙으로 이동 중이라는 해석 가능. 편출된 반도체 부품 기업들은 스마트폰 수요 둔화 국면과 맞물림.
+    </div>
+  </div>
+
+  <div class="insight">
+    <h4>#4 동일 지수, 다른 숫자 — '같은 상품' 착시 리스크</h4>
+    <div class="evidence-block"><span class="label">정량</span>
+      공통 티커 8종, 단독편입 0건. 그러나 비중 스프레드 ≥1%p 종목 3건 — 알테오젠 3.51%p · 에이비엘바이오 1.49%p · 에코프로 1.15%p.
+    </div>
+    <div class="hypothesis-block"><span class="label">[가설]</span>
+      (a) 리밸런싱 시차, (b) CU 단위 차이, (c) 샘플링 정책 차이 혼합. 장기 누적 수익률에서 수십 bp 편차로 이어질 수 있으며, 대형 편입 종목 이벤트 국면에서 특히 가정이 깨질 수 있다.
+    </div>
+  </div>
+
+  <div class="insight risk">
+    <h4>#5 AUM 4~6배 폭증 — 자금은 결과가 아니라 기대를 따랐다</h4>
+    <div class="evidence-block"><span class="label">정량</span>
+      2026-04-13 AUM: KODEX 6,517.6억 · TIGER 2,115.1억 · RISE 481.7억. 2026-02 한 달간 <strong>KODEX 약 4배 · TIGER 약 6배</strong> 급증.
+    </div>
+    <div class="hypothesis-block"><span class="label">[가설]</span>
+      언론·커뮤니티 공통 키워드 "알테오젠 신약 파이프라인 · 로봇 테마 재부상 · 코스닥 반등 기대" → 자금은 실현 수익률이 아닌 향후 모멘텀 기대에 반응. 개인·외국인 <strong>동반 유입</strong>은 리스크 온 국면으로 해석 가능하나 추세 지속성은 미확인.
+    </div>
+  </div>
+</section>
+
+<!-- PAGE 12: ONE LINER + LIMITS -->
+<section class="page">
+  <h2>분석가의 한 줄 요약</h2>
+  <div class="oneliner">
+    코스닥150 ETF 셋은 티커는 같지만 숫자는 달랐다. 그리고 셋 모두 알테오젠 하나에 약 10%를 걸고 있다 — 2026년 코스피 이전 이벤트는 3개 상품 전부를 동시에 흔들 수 있는 단일 최대 리스크다.
+  </div>
+
+  <h2 style="margin-top:14pt">분석의 한계 (반드시 함께 볼 것)</h2>
+  <div class="limits">
+    <ol>
+      <li><strong>시계열 비중 데이터 공백:</strong> 알테오젠(KODEX)을 제외한 모든 종목의 2025-10/2026-01 시점 개별 비중이 N/A. 증액/축소 분류는 알테오젠 1건만 정량 확정. 그 외는 2025-12-12 지수 정기변경 공시를 대리 근거로 사용.</li>
+      <li><strong>TIGER 수치 정확도:</strong> 지수 기반 추정치. ±0.2%p 오차 가능 전제로 해석할 것.</li>
+      <li><strong>RISE vs KODEX 괴리:</strong> 알테오젠 3.51%p 차이는 표면적 사실이나 실제 포트폴리오 차이로 단정 불가 — 집계 시점 차이 가능성, 추가 원천 확인 권장.</li>
+      <li><strong>섹터 분류:</strong> 공식 분류가 아닌 본 분석의 실무 분류(바이오/헬스케어·2차전지·로봇·반도체장비). GICS·거래소 업종 기준 적용 시 HHI 변동 가능.</li>
+      <li><strong>커뮤니티 대표성:</strong> <code>01_community_*.md</code>는 공개 언론 인용 발화만 수집 — 원문 크롤링 제한. 인용 발화는 표본 일부.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- PAGE 13: APPENDIX A -->
+<section class="page">
+  <h2>부록 A. 전체 상위 종목 비중 표</h2>
+  <table>
+    <thead><tr>
+      <th>종목</th><th>티커</th>
+      <th class="num">KODEX</th><th class="num">TIGER</th><th class="num">RISE</th>
+      <th class="num">3-ETF 평균</th><th class="num">스프레드 %p</th>
+      <th>섹터</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>알테오젠</td><td>196170</td><td class="num">10.49%</td><td class="num">10.50%</td><td class="num">6.99%</td><td class="num">9.33%</td><td class="num neg">3.51</td><td>바이오/헬스케어</td></tr>
+      <tr><td>에코프로</td><td>086520</td><td class="num">5.70%</td><td class="num">5.70%</td><td class="num">6.85%</td><td class="num">6.08%</td><td class="num neg">1.15</td><td>2차전지/소재</td></tr>
+      <tr><td>에코프로비엠</td><td>247540</td><td class="num">5.09%</td><td class="num">5.10%</td><td class="num">5.23%</td><td class="num">5.14%</td><td class="num">0.14</td><td>2차전지/양극재</td></tr>
+      <tr><td>에이비엘바이오</td><td>298380</td><td class="num">4.60%</td><td class="num">4.60%</td><td class="num">3.11%</td><td class="num">4.10%</td><td class="num neg">1.49</td><td>바이오/헬스케어</td></tr>
+      <tr><td>삼천당제약</td><td>000250</td><td class="num">—</td><td class="num">3.00%</td><td class="num">3.56%</td><td class="num">3.28%</td><td class="num">0.56</td><td>바이오/헬스케어</td></tr>
+      <tr><td>HLB</td><td>028300</td><td class="num">3.24%</td><td class="num">3.20%</td><td class="num">3.33%</td><td class="num">3.26%</td><td class="num">0.13</td><td>바이오/헬스케어</td></tr>
+      <tr><td>펩트론</td><td>087010</td><td class="num">2.95%</td><td class="num">3.00%</td><td class="num">2.74%</td><td class="num">2.90%</td><td class="num">0.26</td><td>바이오/헬스케어</td></tr>
+      <tr><td>리노공업</td><td>058470</td><td class="num">—</td><td class="num">2.70%</td><td class="num">2.73%</td><td class="num">2.72%</td><td class="num">0.03</td><td>반도체장비</td></tr>
+      <tr><td>리가켐바이오</td><td>141080</td><td class="num">2.65%</td><td class="num">2.60%</td><td class="num">2.35%</td><td class="num">2.53%</td><td class="num">0.30</td><td>바이오/헬스케어</td></tr>
+      <tr><td>레인보우로보틱스</td><td>277810</td><td class="num">2.21%</td><td class="num">2.20%</td><td class="num">2.22%</td><td class="num">2.21%</td><td class="num">0.02</td><td>로봇</td></tr>
+    </tbody>
+  </table>
+  <p class="src-note">— 표시: KODEX 공개 상위 8종목 범위 밖. 3-ETF 평균은 가용 값만의 평균. 스프레드 ≥1%p 종목은 빨간색(coral) 표기.</p>
+
+  <h3>정량 분류 가능 종목 분포</h3>
+  <table class="small-table">
+    <thead><tr><th>분류</th><th class="num">종목수</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag emerald">증액 (Increased)</span></td><td class="num">1</td><td>알테오젠 +2.99%p (KODEX 시계열)</td></tr>
+      <tr><td><span class="tag mint">신규편입 (정기변경)</span></td><td class="num">16</td><td>2025-12-12 코스닥150 지수 기준</td></tr>
+      <tr><td><span class="tag coral">제외 (정기변경)</span></td><td class="num">16</td><td>2025-12-12 코스닥150 지수 기준</td></tr>
+      <tr><td><span class="tag neutral">분류 불가 (N/A)</span></td><td class="num">7</td><td>시점별 비중 원천 부재</td></tr>
+    </tbody>
+  </table>
+  <p class="src-note">정량 증액·축소 분류는 시점별 원천 비중이 확보된 1건만 가능. 실제 포트폴리오 변동이 1건뿐이라는 의미가 아님.</p>
+
+  <h3>집중도 지표 요약 (2026-04-14)</h3>
+  <table>
+    <thead><tr><th>지표</th><th class="num">KODEX</th><th class="num">TIGER</th><th class="num">RISE</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td>Top10 집중도</td><td class="num">36.93%*</td><td class="num">42.60%</td><td class="num">39.11%</td><td>* KODEX는 상위 8종 합</td></tr>
+      <tr><td>섹터 HHI (상위버킷)</td><td class="num">635.9</td><td class="num">794.2</td><td class="num">574.2</td><td>높을수록 섹터 쏠림</td></tr>
+      <tr><td>Effective N</td><td class="num">6.18</td><td class="num">7.66</td><td class="num">8.41</td><td>높을수록 분산</td></tr>
+      <tr><td>AUM (억원)</td><td class="num">6,517.6</td><td class="num">2,115.1</td><td class="num">481.7</td><td>2026-04-13</td></tr>
+      <tr><td>보수율</td><td class="num">0.25%</td><td class="num">0.19%</td><td class="num">0.02%</td><td>연</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- PAGE 14: APPENDIX B -->
+<section class="page">
+  <h2>부록 B. 출처 및 면책</h2>
+  <h3>주요 출처</h3>
+  <ul style="font-size:9.5pt;line-height:1.7">
+    <li>KRX 한국거래소 — 코스닥150 지수 정기변경 공시 (2025-12-12)</li>
+    <li>금융투자협회 — ETF 순자산총액 (AUM) 통계 (2026-04-13 기준)</li>
+    <li>삼성자산운용 — KODEX 코스닥150 월간 공시 / 운용보고서</li>
+    <li>미래에셋자산운용 — TIGER 코스닥150 공시 (지수 기반 추정 포함)</li>
+    <li>KB자산운용 — RISE 코스닥150 PDP (Portfolio Deposit)</li>
+    <li>언론 인용치 — 알테오젠 비중 시계열 (2025-10/2026-01/2026-04 3시점)</li>
+    <li>내부 맥락 채널 — <code>01_press_*.md</code> · <code>01_community_*.md</code> · <code>01_sources.md</code></li>
+  </ul>
+
+  <h3>분석 방법론 (요약)</h3>
+  <ul style="font-size:9.5pt;line-height:1.7">
+    <li><strong>변화 분류:</strong> 증액 임계치 ≥ +0.5%p, 축소 ≤ -0.5%p, 신규/제외는 2025-12-12 지수 정기변경 기준</li>
+    <li><strong>집중도:</strong> Top10 비중 합 / 섹터 HHI (∑ wᵢ²) / Effective N (1/∑ pᵢ²)</li>
+    <li><strong>크로스 ETF 스프레드:</strong> max(KODEX, TIGER, RISE) − min(KODEX, TIGER, RISE) per 종목</li>
+    <li><strong>[가설] 태그:</strong> 언론·커뮤니티 맥락 기반 해석 — 정량 증명 아님</li>
+  </ul>
+
+  <h3>면책 조항</h3>
+  <div class="disclaimer">
+    본 보고서는 정보 제공을 목적으로 작성되었으며, 투자 자문이나 종목 추천이 아닙니다.
+    수록된 데이터는 기재된 기준일의 공시 자료에 근거하며, 이후 변동될 수 있습니다.
+    ETF 투자는 원금 손실의 위험이 있으며, 개별 종목 비중·지수 구성·보수율은 운용사 공시에 따라 갱신됩니다.
+    투자 결정은 본인의 판단과 책임하에 이루어져야 합니다.
+  </div>
+  <p class="src-note" style="margin-top:10pt">작성: kosdaq-etf-team / pdf-author · 발행일 2026-04-14</p>
+</section>
+
+<script>
+  // Palette from web-designer 98_design_tokens.json v0.2.0
+  const P = {
+    navy: '#0B3D91', primary: '#4F8CFF', mint: '#7EE8CF', amber: '#F5A524',
+    emerald: '#10B981', coral: '#FF6B6B', neutral: '#9CA3AF',
+    ink: '#0F172A', muted: '#64748B', line: '#E5E7EB'
+  };
+  const ETF_COLORS = ['#4F8CFF', '#7EE8CF', '#F5A524']; // KODEX / TIGER / RISE
+  const commonText = { color: P.ink, fontFamily: 'Pretendard, sans-serif', fontSize: 11 };
+  const axisStyle = {
+    axisLine: { lineStyle: { color: P.line } },
+    axisTick: { lineStyle: { color: P.line } },
+    axisLabel: { color: P.muted, fontSize: 10, fontFamily: 'Pretendard, sans-serif' },
+    splitLine: { lineStyle: { color: P.line, opacity: 0.6 } }
+  };
+
+  // AUM bar
+  const cAum = echarts.init(document.getElementById('chart-aum'), null, { renderer: 'svg' });
+  cAum.setOption({
+    grid: { left: 80, right: 30, top: 20, bottom: 30 },
+    tooltip: { trigger: 'axis' },
+    xAxis: { type: 'value', name: 'AUM (억원)', nameTextStyle: commonText, min: 0, max: 7000, ...axisStyle },
+    yAxis: { type: 'category', data: ['RISE 코스닥150', 'TIGER 코스닥150', 'KODEX 코스닥150'], ...axisStyle, axisLabel: { ...axisStyle.axisLabel, color: P.ink } },
+    series: [{
+      type: 'bar', data: [
+        { value: 481.7, itemStyle: { color: ETF_COLORS[2] } },
+        { value: 2115.1, itemStyle: { color: ETF_COLORS[1] } },
+        { value: 6517.6, itemStyle: { color: ETF_COLORS[0] } }
+      ],
+      label: { show: true, position: 'right', formatter: '{c} 억원', color: P.ink, fontFamily: 'Pretendard, sans-serif', fontSize: 10 },
+      barWidth: 22
+    }]
+  });
+
+  // Spread bar (horizontal)
+  const cSpread = echarts.init(document.getElementById('chart-spread'), null, { renderer: 'svg' });
+  const spreadData = [
+    ['레인보우로보틱스', 0.02],['리노공업', 0.03],['HLB', 0.13],
+    ['에코프로비엠', 0.14],['펩트론', 0.26],['리가켐바이오', 0.30],
+    ['삼천당제약', 0.56],['에코프로', 1.15],['에이비엘바이오', 1.49],
+    ['알테오젠', 3.51]
+  ];
+  cSpread.setOption({
+    title: { text: '공통 종목 ETF간 비중 스프레드 (max−min, %p)', left: 'center', top: 0, textStyle: { ...commonText, fontSize: 12, fontWeight: 600, color: P.navy } },
+    grid: { left: 100, right: 40, top: 40, bottom: 30 },
+    tooltip: { trigger: 'axis' },
+    xAxis: { type: 'value', name: '%p', nameTextStyle: commonText, ...axisStyle },
+    yAxis: { type: 'category', data: spreadData.map(d=>d[0]), ...axisStyle, axisLabel: { ...axisStyle.axisLabel, color: P.ink } },
+    series: [{
+      type: 'bar', data: spreadData.map(d => ({
+        value: d[1],
+        itemStyle: { color: d[1] >= 1.0 ? P.coral : (d[1] >= 0.5 ? P.amber : P.primary) }
+      })),
+      label: { show: true, position: 'right', formatter: '{c}%p', color: P.ink, fontFamily: 'Pretendard, sans-serif', fontSize: 10 },
+      markLine: { symbol: 'none', lineStyle: { color: P.coral, type: 'dashed' }, data: [{ xAxis: 1.0, label: { formatter: '유의 스프레드 1%p', color: P.coral, fontSize: 9 } }] },
+      barWidth: 14
+    }]
+  });
+
+  // Top10 grouped bar
+  const cTop10 = echarts.init(document.getElementById('chart-top10'), null, { renderer: 'svg' });
+  const top10Cats = ['알테오젠','에코프로','에코프로비엠','에이비엘바이오','HLB','펩트론','삼천당제약','리노공업','리가켐바이오','레인보우로보틱스'];
+  cTop10.setOption({
+    title: { text: 'ETF별 상위 10 종목 비중 (%)', left: 'center', top: 0, textStyle: { ...commonText, fontSize: 12, fontWeight: 600, color: P.navy } },
+    legend: { data: ['KODEX', 'TIGER', 'RISE'], top: 20, textStyle: commonText },
+    grid: { left: 40, right: 20, top: 55, bottom: 50 },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    xAxis: { type: 'category', data: top10Cats, ...axisStyle, axisLabel: { ...axisStyle.axisLabel, interval: 0, rotate: 20, fontSize: 9 } },
+    yAxis: { type: 'value', name: '%', nameTextStyle: commonText, ...axisStyle },
+    series: [
+      { name: 'KODEX', type: 'bar', data: [10.49,5.70,5.09,4.60,3.24,2.95,null,null,2.65,2.21], itemStyle: { color: ETF_COLORS[0] }, barMaxWidth: 14 },
+      { name: 'TIGER', type: 'bar', data: [10.50,5.70,5.10,4.60,3.20,3.00,3.00,2.70,2.60,2.20], itemStyle: { color: ETF_COLORS[1] }, barMaxWidth: 14 },
+      { name: 'RISE',  type: 'bar', data: [6.99,6.85,5.23,3.11,3.33,2.74,3.56,2.73,2.35,2.22], itemStyle: { color: ETF_COLORS[2] }, barMaxWidth: 14 }
+    ]
+  });
+
+  // Alteogen timeseries
+  const cTs = echarts.init(document.getElementById('chart-timeseries'), null, { renderer: 'svg' });
+  cTs.setOption({
+    title: { text: '알테오젠(196170) 비중 시계열 — KODEX 코스닥150', left: 'center', top: 0, textStyle: { ...commonText, fontSize: 12, fontWeight: 600, color: P.navy } },
+    grid: { left: 50, right: 40, top: 50, bottom: 40 },
+    tooltip: { trigger: 'axis' },
+    xAxis: { type: 'category', data: ['2025-10-14', '2026-01-14', '2026-04-14'], ...axisStyle, axisLabel: { ...axisStyle.axisLabel, color: P.ink } },
+    yAxis: { type: 'value', name: '비중 (%)', nameTextStyle: commonText, min: 6, max: 12, ...axisStyle },
+    series: [{
+      type: 'line', data: [7.50, 11.00, 10.49],
+      smooth: false, symbol: 'circle', symbolSize: 10,
+      itemStyle: { color: ETF_COLORS[0] },
+      lineStyle: { color: ETF_COLORS[0], width: 3 },
+      areaStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(79,140,255,0.28)'},{offset:1,color:'rgba(79,140,255,0)'}]) },
+      label: { show: true, formatter: '{c}%', position: 'top', color: P.ink, fontFamily: 'Pretendard, sans-serif', fontSize: 10, fontWeight: 600 },
+      markPoint: { data: [{ coord: ['2026-01-14', 11.00], symbol: 'pin', symbolSize: 38, itemStyle: { color: P.coral }, label: { formatter: '코스피 이전\n의결 2025-12-08', fontSize: 8, color: '#fff' } }] }
+    }]
+  });
+
+  // Rebalancing diverging bar (sector-wise in vs out, 2025-12-12)
+  const cRebal = echarts.init(document.getElementById('chart-rebal'), null, { renderer: 'svg' });
+  // 02_charts_spec.json v1.0.0 inout_distribution.buckets 정합
+  const sectors = ['로봇', '바이오/헬스케어', '반도체 부품/IP', '소비재/식품/화장품', '산업재/금융/IT'];
+  const included = [4, 3, 1, 2, 6];
+  const excluded = [0, 3, 9, 2, 2];
+  cRebal.setOption({
+    title: { text: '2025-12-12 코스닥150 편입·편출 섹터 분포', left: 'center', top: 0, textStyle: { ...commonText, fontSize: 12, fontWeight: 600, color: P.navy } },
+    legend: { data: ['편입', '편출'], top: 22, textStyle: commonText },
+    grid: { left: 100, right: 30, top: 55, bottom: 30 },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: p => p.map(i => `${i.seriesName}: ${Math.abs(i.value)}종`).join('<br/>') },
+    xAxis: { type: 'value', name: '종목 수', nameTextStyle: commonText, ...axisStyle, axisLabel: { ...axisStyle.axisLabel, formatter: v => Math.abs(v) } },
+    yAxis: { type: 'category', data: sectors, ...axisStyle, axisLabel: { ...axisStyle.axisLabel, color: P.ink } },
+    series: [
+      { name: '편입', type: 'bar', stack: 'total', data: included, itemStyle: { color: P.emerald }, label: { show: true, position: 'right', color: P.emerald, fontSize: 9, fontFamily: 'Pretendard, sans-serif', formatter: p => p.value > 0 ? p.value : '' }, barMaxWidth: 16 },
+      { name: '편출', type: 'bar', stack: 'total', data: excluded.map(v => -v), itemStyle: { color: P.coral }, label: { show: true, position: 'left', color: P.coral, fontSize: 9, fontFamily: 'Pretendard, sans-serif', formatter: p => p.value < 0 ? Math.abs(p.value) : '' }, barMaxWidth: 16 }
+    ]
+  });
+
+  // 차트 렌더 완료 신호
+  window.__CHARTS_READY__ = true;
+</script>
+</body>
+</html>

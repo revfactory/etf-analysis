@@ -1,0 +1,183 @@
+{
+  "meta": {
+    "generated_at": "2026-04-14",
+    "analyst": "data-analyst",
+    "snapshot_dates": ["2025-10-14", "2026-01-14", "2026-04-14"],
+    "method": "portfolio-analysis v1 (편입/제외는 2025-12-12 지수 정기변경 기준, 증액/축소는 알테오젠 시계열 1건만 유효, Top10 집중도·HHI·크로스 ETF 스프레드는 2026-04-14 기준)",
+    "data_limitations": [
+      "KODEX/TIGER/RISE 3개 ETF 모두 2025-10-14/2026-01-14 시점의 개별 종목 상세 비중은 운용사 월간 PDF 과거 아카이브 접근 제한으로 N/A",
+      "알테오젠(196170)만 뉴스 인용치 기반 3시점 시계열 확보 (KODEX 기준 7.50 → 11.00 → 10.49 %)",
+      "TIGER 개별 종목 비중은 지수 내 추정 구간으로, 소수점 정확도는 KODEX/RISE보다 낮음",
+      "동일 지수 추종임에도 알테오젠 비중이 KODEX 10.49% vs RISE 6.99%로 괴리 → 집계 시점·CU 단위 차이 가설, 교차 검증 권장"
+    ]
+  },
+  "etfs": [
+    {
+      "code": "229200",
+      "name": "KODEX 코스닥150",
+      "top_listed_concentration_pct": 36.93,
+      "top_listed_concentration_note": "공개 상위 8종목 합 (나머지 2종목 N/A). RISE 상위 10 기준 39.11%와 직접 비교 불가",
+      "sector_hhi_top_bucket": 635.9,
+      "sector_hhi_note": "상위 공개 종목의 섹터별 비중 제곱합. 바이오/헬스케어 단일 섹터가 23.93%로 HHI의 약 90%를 설명",
+      "effective_n_top_bucket": 6.18,
+      "sector_breakdown_top": {
+        "바이오/헬스케어": 23.93,
+        "2차전지/소재": 5.70,
+        "2차전지/양극재": 5.09,
+        "로봇": 2.21
+      },
+      "classifications": {
+        "new": [],
+        "removed": [],
+        "increased": [
+          {
+            "ticker": "196170",
+            "name": "알테오젠",
+            "weight_m6": 7.50,
+            "weight_m3": 11.00,
+            "weight_latest": 10.49,
+            "delta_pp_6m": 2.99,
+            "delta_pp_3m": -0.51,
+            "classification": "increased",
+            "note": "6개월 기준 +2.99%p 증액(임계치 ≥+0.5%p). 최근 3개월은 -0.51%p 축소"
+          }
+        ],
+        "decreased": [],
+        "stable": [],
+        "not_classifiable_due_to_missing_data": [
+          {"ticker": "086520", "name": "에코프로", "reason": "2025-10/2026-01 비중 N/A"},
+          {"ticker": "247540", "name": "에코프로비엠", "reason": "2025-10/2026-01 비중 N/A"},
+          {"ticker": "298380", "name": "에이비엘바이오", "reason": "2025-10/2026-01 비중 N/A"},
+          {"ticker": "028300", "name": "HLB", "reason": "2025-10/2026-01 비중 N/A"},
+          {"ticker": "087010", "name": "펩트론", "reason": "2025-10/2026-01 비중 N/A"},
+          {"ticker": "141080", "name": "리가켐바이오", "reason": "2025-10/2026-01 비중 N/A"},
+          {"ticker": "277810", "name": "레인보우로보틱스", "reason": "2025-10/2026-01 비중 N/A"}
+        ]
+      },
+      "index_rebalancing_new_members_2025_12_12": [
+        "펌텍코리아", "비에이치아이", "LS마린솔루션", "유일로보틱스", "유진로봇",
+        "감성코퍼레이션", "올릭스", "디앤디파마텍", "인카금융서비스", "로보티즈",
+        "코나아이", "미코", "솔트룩스", "아이쓰리시스템", "우리기술", "클로봇"
+      ],
+      "index_rebalancing_removed_members_2025_12_12": [
+        "미래나노텍", "아이패밀리에스씨", "매일유업", "아이센스", "HLB테라퓨틱스",
+        "바이오니아", "한국기업평가", "파트론", "덕산테코피아", "기가비스",
+        "칩스앤미디어", "프로텍", "아이티엠반도체", "오픈엣지테크놀로지", "인탑스", "이엠텍"
+      ],
+      "hhi_timeseries": {
+        "series_available": false,
+        "reason": "시점별 섹터 비중 데이터 부재 — 2026-04-14 단일 시점만 산출",
+        "latest_only": 635.9
+      }
+    },
+    {
+      "code": "232080",
+      "name": "TIGER 코스닥150",
+      "top_listed_concentration_pct": 42.60,
+      "top_listed_concentration_note": "상위 10종목 합(추정치 포함). KODEX·RISE와 동일 지수 추종이므로 실제 근접값 예상",
+      "sector_hhi_top_bucket": 794.2,
+      "effective_n_top_bucket": 7.66,
+      "sector_breakdown_top": {
+        "바이오/헬스케어": 26.90,
+        "2차전지/소재": 5.70,
+        "2차전지/양극재": 5.10,
+        "반도체장비": 2.70,
+        "로봇": 2.20
+      },
+      "classifications": {
+        "new": [],
+        "removed": [],
+        "increased": [],
+        "decreased": [],
+        "stable": [],
+        "not_classifiable_due_to_missing_data": [
+          {"ticker": "196170", "name": "알테오젠", "reason": "TIGER 시점별 원문 수치 N/A, 지수 기반 약 10.5% 추정"},
+          {"note": "기타 9개 상위 종목 모두 시점별 정확 비중 미확보"}
+        ]
+      },
+      "index_rebalancing_ref": "KODEX와 동일 (2025-12-12 정기변경)",
+      "hhi_timeseries": {
+        "series_available": false,
+        "latest_only": 794.2
+      }
+    },
+    {
+      "code": "270810",
+      "name": "RISE 코스닥150",
+      "top_listed_concentration_pct": 39.11,
+      "top_listed_concentration_note": "상위 10종목 공식 PDP 수집치 합계",
+      "sector_hhi_top_bucket": 574.2,
+      "effective_n_top_bucket": 8.41,
+      "sector_breakdown_top": {
+        "바이오/헬스케어": 22.08,
+        "2차전지/소재": 6.85,
+        "2차전지/양극재": 5.23,
+        "반도체장비": 2.73,
+        "로봇": 2.22
+      },
+      "classifications": {
+        "new": [],
+        "removed": [],
+        "increased": [],
+        "decreased": [],
+        "stable": [],
+        "not_classifiable_due_to_missing_data": [
+          {"note": "RISE 전 종목 2025-10/2026-01 시점 비중 N/A — 분류 불가"}
+        ]
+      },
+      "index_rebalancing_ref": "KODEX와 동일 (2025-12-12 정기변경)",
+      "hhi_timeseries": {
+        "series_available": false,
+        "latest_only": 574.2
+      }
+    }
+  ],
+  "cross_etf": {
+    "common_top10_all3": [
+      {"ticker": "196170", "name": "알테오젠"},
+      {"ticker": "086520", "name": "에코프로"},
+      {"ticker": "247540", "name": "에코프로비엠"},
+      {"ticker": "298380", "name": "에이비엘바이오"},
+      {"ticker": "028300", "name": "HLB"},
+      {"ticker": "087010", "name": "펩트론"},
+      {"ticker": "141080", "name": "리가켐바이오"},
+      {"ticker": "277810", "name": "레인보우로보틱스"}
+    ],
+    "unique_to": {
+      "229200": [],
+      "232080": [],
+      "270810": []
+    },
+    "tiger_rise_only_vs_kodex_top10": [
+      {"ticker": "000250", "name": "삼천당제약", "note": "TIGER/RISE Top10에는 있으나 KODEX 공개 상위 8종목에는 없음 (KODEX 10위권 notes에는 언급)"},
+      {"ticker": "058470", "name": "리노공업", "note": "동일 — 지수 내 9~10위권 경계종목"}
+    ],
+    "largest_spreads": [
+      {"ticker": "196170", "name": "알테오젠", "kodex": 10.49, "tiger": 10.5, "rise": 6.99, "spread_pp": 3.51, "note": "[가설] KODEX/TIGER는 11월말 CU 기준, RISE는 보다 이른 기준으로 추정 — 동일 지수임에도 집계 시점 차이로 해석될 수 있음"},
+      {"ticker": "298380", "name": "에이비엘바이오", "kodex": 4.60, "tiger": 4.6, "rise": 3.11, "spread_pp": 1.49},
+      {"ticker": "086520", "name": "에코프로", "kodex": 5.70, "tiger": 5.7, "rise": 6.85, "spread_pp": 1.15, "note": "RISE에서는 KODEX 대비 +1.15%p — RISE CU 내 에코프로 평가 시점이 보다 고점에 가까웠을 가능성"},
+      {"ticker": "000250", "name": "삼천당제약", "kodex": null, "tiger": 3.00, "rise": 3.56, "spread_pp": 0.56},
+      {"ticker": "141080", "name": "리가켐바이오", "kodex": 2.65, "tiger": 2.6, "rise": 2.35, "spread_pp": 0.30}
+    ]
+  },
+  "sector_changes": {
+    "series_available": false,
+    "reason": "시점별 섹터별 비중 데이터 확보 불가",
+    "snapshot_2026_04_14": {
+      "KODEX": {"바이오/헬스케어": 23.93, "2차전지": 10.79, "로봇": 2.21},
+      "TIGER": {"바이오/헬스케어": 26.90, "2차전지": 10.80, "반도체장비": 2.70, "로봇": 2.20},
+      "RISE":  {"바이오/헬스케어": 22.08, "2차전지": 12.08, "반도체장비": 2.73, "로봇": 2.22}
+    },
+    "rebalancing_direction_hypothesis": "2025-12-12 정기변경은 로봇(유일로보틱스·유진로봇·로보티즈·클로봇)·바이오(디앤디파마텍·올릭스)를 16종 편입하고 반도체 부품/소비재(이엠텍·인탑스·파트론·매일유업) 16종을 편출했다. 지수 섹터 비중은 ‘로봇·바이오 ↑, 소비재·반도체 부품 ↓’ 방향으로 이동했을 가능성이 높다. [가설]"
+  },
+  "time_series_observed": {
+    "알테오젠_KODEX": {
+      "2025-10-14": 7.50,
+      "2026-01-14": 11.00,
+      "2026-04-14": 10.49,
+      "delta_6m_pp": 2.99,
+      "delta_3m_pp": -0.51,
+      "interpretation": "6개월간 신약 파이프라인 모멘텀으로 비중 +2.99%p 상승 후, 코스피 이전상장 의결 이후 소폭 조정. 코스피 이전 확정 시 코스닥150 구성에서 편출되어 대규모 수급 재편 예상 [가설]"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+.DS_Store
+**/.DS_Store
+node_modules/
+_workspace/pdf_build/node_modules/
+_site/
+.jekyll-cache/
+.jekyll-metadata

@@ -1,0 +1,92 @@
+{
+  "etf_code": "232080",
+  "etf_name": "TIGER 코스닥150",
+  "asset_manager": "미래에셋자산운용",
+  "as_of_dates": ["2025-10-14", "2026-01-14", "2026-04-14"],
+  "data_notes": [
+    "TIGER 코스닥150은 동일 코스닥150 지수 추종 ETF로 구성종목과 비중은 KODEX/RISE와 거의 동일 (CU 단위·리밸런싱 시점의 소수점 차이 존재)",
+    "미래에셋 PDP 웹페이지의 상세 PDF 직접 파싱 실패로, 지수 내 비중 및 교차 확인된 KODEX/RISE 데이터를 기준으로 동일 추정 구간은 'N/A'로 보수적 처리",
+    "2026-04-14 시점 상위 종목은 알테오젠·에코프로·에코프로비엠·에이비엘바이오·HLB·펩트론·리가켐바이오·리노공업·레인보우로보틱스·삼천당제약 순(코스닥150 지수 상위)"
+  ],
+  "holdings": [
+    {
+      "ticker": "196170",
+      "name": "알테오젠",
+      "sector": "바이오/헬스케어",
+      "weights": ["N/A", "N/A", "약 10.5"],
+      "weight_change_pct": "N/A",
+      "rank_latest": 1,
+      "notes": "지수 내 비중 기반 추정 구간. 정확 비중은 미래에셋 TIGER 월간 구성종목 PDF 원문 접근 필요"
+    },
+    {
+      "ticker": "086520",
+      "name": "에코프로",
+      "sector": "2차전지/소재",
+      "weights": ["N/A", "N/A", "약 5.7"],
+      "rank_latest": 2
+    },
+    {
+      "ticker": "247540",
+      "name": "에코프로비엠",
+      "sector": "2차전지/양극재",
+      "weights": ["N/A", "N/A", "약 5.1"],
+      "rank_latest": 3
+    },
+    {
+      "ticker": "298380",
+      "name": "에이비엘바이오",
+      "sector": "바이오/헬스케어",
+      "weights": ["N/A", "N/A", "약 4.6"],
+      "rank_latest": 4
+    },
+    {
+      "ticker": "028300",
+      "name": "HLB",
+      "sector": "바이오/헬스케어",
+      "weights": ["N/A", "N/A", "약 3.2"],
+      "rank_latest": 5
+    },
+    {
+      "ticker": "087010",
+      "name": "펩트론",
+      "sector": "바이오/헬스케어",
+      "weights": ["N/A", "N/A", "약 3.0"],
+      "rank_latest": 6
+    },
+    {
+      "ticker": "000250",
+      "name": "삼천당제약",
+      "sector": "바이오/헬스케어",
+      "weights": ["N/A", "N/A", "약 3.0"],
+      "rank_latest": 7
+    },
+    {
+      "ticker": "058470",
+      "name": "리노공업",
+      "sector": "반도체장비",
+      "weights": ["N/A", "N/A", "약 2.7"],
+      "rank_latest": 8
+    },
+    {
+      "ticker": "141080",
+      "name": "리가켐바이오",
+      "sector": "바이오/헬스케어",
+      "weights": ["N/A", "N/A", "약 2.6"],
+      "rank_latest": 9
+    },
+    {
+      "ticker": "277810",
+      "name": "레인보우로보틱스",
+      "sector": "로봇",
+      "weights": ["N/A", "N/A", "약 2.2"],
+      "rank_latest": 10
+    }
+  ],
+  "rebalancing_events": [
+    {
+      "date": "2025-12-12",
+      "type": "정기변경",
+      "note": "지수 기반 ETF이므로 KODEX와 동일 편입·편출 적용 (01_holdings_229200.json 참조)"
+    }
+  ]
+}

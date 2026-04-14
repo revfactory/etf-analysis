@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="코스닥 ETF Top 3 포트폴리오 및 피투자사 비중 변화 분석 리포트 (기준일 2026-04-14)" />
+  <title>코스닥 ETF Top 3 포트폴리오 분석 · 2026-04-14</title>
+
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #0B0F1A;
+      --surface: #111827;
+      --surface-alt: #1F2937;
+      --border: rgba(255,255,255,0.08);
+      --text: #E5E7EB;
+      --text-soft: #9CA3AF;
+      --heading: #4F8CFF;
+      --brand-navy: #0B3D91;
+      --brand-blue: #4F8CFF;
+      --brand-emerald: #10B981;
+      --brand-amber: #F5A524;
+      --brand-coral: #FF6B6B;
+      --etf1: #4F8CFF;
+      --etf2: #7EE8CF;
+      --etf3: #F5A524;
+      --cat-in: #10B981;
+      --cat-out: #FF6B6B;
+      --cat-hold: #9CA3AF;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --radius: 16px;
+      --shadow-1: 0 1px 2px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.25);
+      --shadow-2: 0 8px 32px rgba(0,0,0,0.4);
+      --content-max: 1200px;
+    }
+
+    [data-theme="light"] {
+      --bg: #FAFAFB;
+      --surface: #FFFFFF;
+      --surface-alt: #F3F4F6;
+      --border: #E5E7EB;
+      --text: #0F172A;
+      --text-soft: #64748B;
+      --heading: #0B3D91;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+      word-break: keep-all;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+    #bg-canvas {
+      position: fixed; inset: 0; z-index: -1;
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ========== NAV ========== */
+    nav.topbar {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: color-mix(in srgb, var(--bg) 72%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; }
+    .brand-mark {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--brand-blue), var(--brand-emerald));
+    }
+    .nav-links {
+      display: flex; gap: 24px; font-size: 14px; color: var(--text-soft);
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-actions { display: flex; gap: 8px; align-items: center; }
+    .icon-btn {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border);
+      transition: background 200ms var(--ease), transform 200ms var(--ease);
+    }
+    .icon-btn:hover { background: var(--surface-alt); transform: translateY(-1px); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+    }
+
+    /* ========== HERO ========== */
+    .hero {
+      padding: 80px 0 56px;
+      position: relative;
+    }
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--brand-blue);
+      padding: 6px 12px; border: 1px solid var(--border); border-radius: 999px;
+      background: color-mix(in srgb, var(--brand-blue) 10%, transparent);
+    }
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-top: 16px;
+      background: linear-gradient(135deg, var(--text) 10%, var(--brand-blue) 90%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero p.lead {
+      margin-top: 20px;
+      max-width: 720px;
+      font-size: clamp(16px, 1.6vw, 19px);
+      color: var(--text-soft);
+    }
+    .hero-meta {
+      margin-top: 24px; display: flex; gap: 20px; flex-wrap: wrap;
+      color: var(--text-soft); font-size: 14px;
+    }
+
+    .kpi-grid {
+      margin-top: 48px;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    }
+    @media (max-width: 900px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+    .kpi-card {
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--surface) 80%, transparent);
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      transition: transform 200ms var(--ease), border-color 200ms var(--ease);
+    }
+    .kpi-card:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--brand-blue) 40%, var(--border)); }
+    .kpi-label { font-size: 12px; color: var(--text-soft); letter-spacing: 0.04em; }
+    .kpi-value { font-size: 28px; font-weight: 700; margin-top: 6px; letter-spacing: -0.01em; }
+    .kpi-sub { font-size: 12px; color: var(--text-soft); margin-top: 4px; }
+
+    /* ========== SECTION ========== */
+    section.block { padding: 72px 0; }
+    .section-head { margin-bottom: 32px; }
+    .section-kicker { font-size: 13px; color: var(--brand-blue); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; }
+    .section-title { font-size: clamp(24px, 3vw, 36px); font-weight: 700; margin-top: 8px; letter-spacing: -0.01em; }
+    .section-sub { color: var(--text-soft); margin-top: 8px; max-width: 720px; }
+
+    /* ========== ETF TAB ========== */
+    .etf-tabs {
+      display: inline-flex; padding: 4px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 999px; gap: 2px;
+    }
+    .etf-tab {
+      padding: 8px 18px; border-radius: 999px; font-size: 14px; font-weight: 600;
+      color: var(--text-soft); transition: all 200ms var(--ease);
+    }
+    .etf-tab[aria-selected="true"] {
+      background: var(--brand-blue); color: #fff;
+    }
+    .etf-tab:hover:not([aria-selected="true"]) { color: var(--text); }
+
+    .etf-card {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow-1);
+      margin-top: 24px;
+    }
+    .etf-card-head {
+      display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;
+    }
+    .etf-badge {
+      display: inline-block; padding: 4px 10px; border-radius: 6px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
+    }
+    .etf-stat-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 20px;
+    }
+    @media (max-width: 700px) { .etf-stat-grid { grid-template-columns: repeat(2, 1fr); } }
+    .etf-stat-label { font-size: 12px; color: var(--text-soft); }
+    .etf-stat-value { font-size: 20px; font-weight: 700; margin-top: 4px; }
+
+    /* ========== CHART PLACEHOLDER ========== */
+    .chart-box {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-1);
+    }
+    .chart-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    .chart-sub { font-size: 13px; color: var(--text-soft); margin-bottom: 16px; }
+    .chart-canvas {
+      width: 100%; height: 420px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-soft); font-size: 14px;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent, transparent 10px,
+        color-mix(in srgb, var(--border) 50%, transparent) 10px,
+        color-mix(in srgb, var(--border) 50%, transparent) 11px
+      );
+      border-radius: 12px;
+    }
+    .chart-caption { margin-top: 12px; font-size: 12px; color: var(--text-soft); font-style: italic; }
+
+    .chart-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    }
+    @media (max-width: 900px) { .chart-grid { grid-template-columns: 1fr; } }
+
+    /* ========== HOLDINGS GRID ========== */
+    .holdings-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    }
+    @media (max-width: 1024px) { .holdings-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 768px)  { .holdings-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px)  { .holdings-grid { grid-template-columns: 1fr; } }
+
+    .holding-card {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 14px 16px;
+      transition: transform 160ms var(--ease), box-shadow 200ms var(--ease), border-color 200ms var(--ease);
+      position: relative;
+    }
+    .holding-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-2);
+      border-color: color-mix(in srgb, var(--brand-blue) 40%, var(--border));
+    }
+    .holding-rank { font-size: 11px; color: var(--text-soft); }
+    .holding-name { font-size: 15px; font-weight: 700; margin-top: 2px; }
+    .holding-meta {
+      margin-top: 10px; display: flex; justify-content: space-between; align-items: baseline;
+      font-size: 13px;
+    }
+    .holding-weight { font-weight: 700; letter-spacing: -0.01em; font-size: 16px; }
+    .delta-badge {
+      font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 700;
+    }
+    .delta-up  { color: var(--cat-in);  background: color-mix(in srgb, var(--cat-in) 15%, transparent); }
+    .delta-dn  { color: var(--cat-out); background: color-mix(in srgb, var(--cat-out) 15%, transparent); }
+    .delta-mid { color: var(--cat-hold); background: color-mix(in srgb, var(--cat-hold) 15%, transparent); }
+
+    /* ========== INSIGHTS ========== */
+    .insight-list { display: grid; gap: 16px; }
+    .insight-item {
+      border-left: 3px solid var(--brand-blue);
+      padding: 20px 24px;
+      background: var(--surface);
+      border-radius: 0 12px 12px 0;
+      border-top: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .insight-num { font-size: 12px; color: var(--brand-blue); font-weight: 700; letter-spacing: 0.1em; }
+    .insight-title { font-size: 18px; font-weight: 700; margin-top: 4px; }
+    .insight-body { color: var(--text-soft); margin-top: 8px; font-size: 15px; }
+
+    /* ========== CONTEXT (press / community) ========== */
+    .context-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 900px) { .context-grid { grid-template-columns: 1fr; } }
+    .context-card {
+      border: 1px solid var(--border); background: var(--surface);
+      border-radius: var(--radius); padding: 24px;
+    }
+    .context-card h3 { font-size: 18px; margin-bottom: 12px; }
+    .quote {
+      border-left: 2px solid var(--border);
+      padding: 6px 14px; margin: 10px 0;
+      color: var(--text-soft); font-size: 14px;
+    }
+    .quote cite {
+      display: block; margin-top: 6px; font-style: normal; font-size: 12px; color: var(--text-soft);
+    }
+
+    /* ========== LIMITATIONS ========== */
+    .limit-list { display: grid; gap: 8px; }
+    .limit-item {
+      padding: 12px 16px; border: 1px dashed var(--border);
+      border-radius: 10px; font-size: 14px; color: var(--text-soft);
+    }
+
+    /* ========== FOOTER ========== */
+    footer {
+      border-top: 1px solid var(--border); margin-top: 48px;
+      padding: 32px 0 56px; color: var(--text-soft); font-size: 13px;
+    }
+    .footer-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+
+    /* ========== REVEAL ========== */
+    .reveal { opacity: 0; transform: translateY(16px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); }
+    .reveal.in  { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+      #bg-canvas { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <!-- ================== TOP NAV ================== -->
+  <nav class="topbar" aria-label="상단 내비게이션">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>KOSDAQ ETF Report</span>
+      </div>
+      <div class="nav-links">
+        <a href="#overview">개요</a>
+        <a href="#etfs">ETF</a>
+        <a href="#changes">비중 변화</a>
+        <a href="#insights">인사이트</a>
+        <a href="#context">맥락</a>
+        <a href="#limitations">한계</a>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" id="theme-toggle" aria-label="테마 전환" title="다크/라이트 전환">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"/></svg>
+        </button>
+        <a class="icon-btn" href="./report.pdf" aria-label="PDF 다운로드" title="PDF 다운로드">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- ================== HERO ================== -->
+    <section class="hero container" id="overview">
+      <span class="hero-eyebrow">2026-04-14 · 분기 스냅샷</span>
+      <h1 data-key="hero_title">코스닥 ETF Top 3<br/>피투자사 포트폴리오 분석</h1>
+      <p class="lead" data-key="hero_lead">
+        국내 코스닥 지수를 추종하는 주요 ETF 3종의 피투자사 구성을 비교하고,
+        최근 6개월간의 비중 변화·편입/제외·섹터 집중도를 투명하게 정리했습니다.
+      </p>
+      <div class="hero-meta">
+        <span>기준일 <strong data-key="report_date">2026-04-14</strong></span>
+        <span>비교 시점 <strong>2025-10-14 · 2026-01-14 · 2026-04-14</strong></span>
+        <span>선정 기준 <strong>순자산(AUM)</strong></span>
+      </div>
+
+      <div class="kpi-grid" data-key="kpi_hero">
+        <div class="kpi-card reveal">
+          <div class="kpi-label">Top 3 총 AUM</div>
+          <div class="kpi-value" data-bind="kpi.total_aum">—</div>
+          <div class="kpi-sub" data-bind="kpi.total_aum_sub">data-analyst 수집 대기</div>
+        </div>
+        <div class="kpi-card reveal">
+          <div class="kpi-label">분석 대상 ETF</div>
+          <div class="kpi-value" data-bind="kpi.etf_count">3</div>
+          <div class="kpi-sub">레버리지/인버스 제외</div>
+        </div>
+        <div class="kpi-card reveal">
+          <div class="kpi-label">추적 피투자사</div>
+          <div class="kpi-value" data-bind="kpi.holdings_count">—</div>
+          <div class="kpi-sub">상위 10종목 × 3ETF 합집합</div>
+        </div>
+        <div class="kpi-card reveal">
+          <div class="kpi-label">분기 신규 편입</div>
+          <div class="kpi-value" data-bind="kpi.new_entries">—</div>
+          <div class="kpi-sub">최근 3개월 기준</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================== ETF PROFILES ================== -->
+    <section class="block container" id="etfs">
+      <div class="section-head reveal">
+        <div class="section-kicker">ETF 프로파일</div>
+        <h2 class="section-title">상위 3개 ETF 개요</h2>
+        <p class="section-sub">AUM 기준 상위 3개 코스닥 ETF. 탭으로 각 ETF 상세 포트폴리오를 전환합니다.</p>
+      </div>
+
+      <div role="tablist" aria-label="ETF 선택" class="etf-tabs" id="etf-tablist">
+        <button role="tab" class="etf-tab" data-etf="ETF1" aria-selected="true">ETF 1</button>
+        <button role="tab" class="etf-tab" data-etf="ETF2" aria-selected="false">ETF 2</button>
+        <button role="tab" class="etf-tab" data-etf="ETF3" aria-selected="false">ETF 3</button>
+      </div>
+
+      <div class="etf-card reveal" data-key="etf_profiles">
+        <div class="etf-card-head">
+          <div>
+            <div class="etf-badge" data-bind="etf.badge" style="background: color-mix(in srgb, var(--etf1) 20%, transparent); color: var(--etf1);">ETF1</div>
+            <h3 style="font-size: 22px; margin-top: 8px;" data-bind="etf.name">ETF 종목명 (data-analyst 대기)</h3>
+            <p style="color: var(--text-soft); font-size: 14px; margin-top: 4px;" data-bind="etf.manager">운용사 · 추종지수</p>
+          </div>
+          <div style="text-align: right;">
+            <div class="kpi-label">상장일</div>
+            <div class="kpi-value" style="font-size: 18px;" data-bind="etf.listing">—</div>
+          </div>
+        </div>
+        <div class="etf-stat-grid">
+          <div><div class="etf-stat-label">AUM</div><div class="etf-stat-value" data-bind="etf.aum">—</div></div>
+          <div><div class="etf-stat-label">총보수</div><div class="etf-stat-value" data-bind="etf.fee">—</div></div>
+          <div><div class="etf-stat-label">구성종목 수</div><div class="etf-stat-value" data-bind="etf.n_holdings">—</div></div>
+          <div><div class="etf-stat-label">Top10 집중도</div><div class="etf-stat-value" data-bind="etf.top10_share">—</div></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 28px;">
+        <div class="chart-box reveal" data-key="aum_compare">
+          <div class="chart-title">코스닥 ETF Top 3 AUM 비교</div>
+          <div class="chart-sub">순자산 규모(억원) 기준, 기준일 2026-04-14</div>
+          <div class="chart-canvas" data-chart="aum_compare">차트 자리 (데이터 바인딩 대기)</div>
+          <div class="chart-caption" data-bind="caption.aum_compare">자료: —, 기준일: 2026-04-14</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================== HOLDINGS ================== -->
+    <section class="block container" id="holdings">
+      <div class="section-head reveal">
+        <div class="section-kicker">상위 10 종목</div>
+        <h2 class="section-title">ETF별 상위 10종목 비중 비교 (기준일: 2026-04-14)</h2>
+        <p class="section-sub">3개 ETF의 상위 10종목을 나란히 놓고, 공통 보유 종목과 독자 편입 종목을 비교합니다.</p>
+      </div>
+
+      <div class="chart-box reveal" data-key="top10_compare" style="margin-bottom: 28px;">
+        <div class="chart-title">ETF별 상위 10종목 비중 비교</div>
+        <div class="chart-sub">수평 막대 · 공통 종목 정렬</div>
+        <div class="chart-canvas" data-chart="top10_compare">차트 자리 (수평 막대)</div>
+        <div class="chart-caption" data-bind="caption.top10_compare">자료: —, 기준일: 2026-04-14</div>
+      </div>
+
+      <div class="holdings-grid reveal" data-key="holdings_grid" id="holdings-grid">
+        <!-- data-analyst 산출물 수신 시 JS로 카드 렌더링. 아래 템플릿 placeholder 3개 -->
+        <div class="holding-card">
+          <div class="holding-rank">#—</div>
+          <div class="holding-name">종목명 대기</div>
+          <div class="holding-meta">
+            <span class="holding-weight">—%</span>
+            <span class="delta-badge delta-mid">Δ —bp</span>
+          </div>
+        </div>
+        <div class="holding-card">
+          <div class="holding-rank">#—</div>
+          <div class="holding-name">종목명 대기</div>
+          <div class="holding-meta">
+            <span class="holding-weight">—%</span>
+            <span class="delta-badge delta-mid">Δ —bp</span>
+          </div>
+        </div>
+        <div class="holding-card">
+          <div class="holding-rank">#—</div>
+          <div class="holding-name">종목명 대기</div>
+          <div class="holding-meta">
+            <span class="holding-weight">—%</span>
+            <span class="delta-badge delta-mid">Δ —bp</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================== CHANGES ================== -->
+    <section class="block container" id="changes">
+      <div class="section-head reveal">
+        <div class="section-kicker">비중 변화</div>
+        <h2 class="section-title">주요 종목 비중 시계열 (2025-10-14 ~ 2026-04-14)</h2>
+        <p class="section-sub">6개월 · 3개월 · 최신 3개 시점의 비중 변화를 시리즈로 비교합니다. 종목 토글 가능.</p>
+      </div>
+
+      <div class="chart-box reveal" data-key="timeseries_weights" style="margin-bottom: 28px;">
+        <div class="chart-title">피투자사 비중 시계열 변화</div>
+        <div class="chart-sub">라인 차트 · 범례 클릭으로 종목 on/off</div>
+        <div class="chart-canvas" data-chart="timeseries_weights">차트 자리 (라인)</div>
+        <div class="chart-caption" data-bind="caption.timeseries_weights">자료: —, 기준일: 2026-04-14</div>
+      </div>
+
+      <div class="chart-grid">
+        <div class="chart-box reveal" data-key="inout_distribution">
+          <div class="chart-title">편입/제외/증액/축소 분포</div>
+          <div class="chart-sub">다이버징 막대 · 카테고리별 건수와 합계 비중</div>
+          <div class="chart-canvas" data-chart="inout_distribution" style="height: 320px;">차트 자리</div>
+          <div class="chart-caption" data-bind="caption.inout_distribution">자료: —, 기준일: 2026-04-14</div>
+        </div>
+        <div class="chart-box reveal" data-key="concentration_hhi">
+          <div class="chart-title">섹터 집중도 (HHI)</div>
+          <div class="chart-sub">도넛 · ETF별 섹터 가중 HHI</div>
+          <div class="chart-canvas" data-chart="concentration_hhi" style="height: 320px;">차트 자리</div>
+          <div class="chart-caption" data-bind="caption.concentration_hhi">자료: —, 기준일: 2026-04-14</div>
+        </div>
+      </div>
+
+      <div class="chart-box reveal" data-key="movers_ranking" style="margin-top: 28px;">
+        <div class="chart-title">상위 종목 증액/축소 랭킹</div>
+        <div class="chart-sub">불릿 · 3개월 변동 기준 상위 10</div>
+        <div class="chart-canvas" data-chart="movers_ranking" style="height: 360px;">차트 자리</div>
+        <div class="chart-caption" data-bind="caption.movers_ranking">자료: —, 기준일: 2026-04-14</div>
+      </div>
+    </section>
+
+    <!-- ================== INSIGHTS ================== -->
+    <section class="block container" id="insights">
+      <div class="section-head reveal">
+        <div class="section-kicker">인사이트</div>
+        <h2 class="section-title">핵심 해석 3~5</h2>
+        <p class="section-sub">data-analyst의 정량 결과와 etf-researcher의 보도·커뮤니티 맥락을 종합.</p>
+      </div>
+
+      <div class="insight-list" data-key="insights">
+        <article class="insight-item reveal">
+          <div class="insight-num">INSIGHT 01</div>
+          <h3 class="insight-title">인사이트 제목 (data-analyst 대기)</h3>
+          <p class="insight-body">본문 대기 중. 정량 변화와 보도·커뮤니티 반응을 연결해 3~5개 도출 예정.</p>
+        </article>
+        <article class="insight-item reveal">
+          <div class="insight-num">INSIGHT 02</div>
+          <h3 class="insight-title">—</h3>
+          <p class="insight-body">—</p>
+        </article>
+        <article class="insight-item reveal">
+          <div class="insight-num">INSIGHT 03</div>
+          <h3 class="insight-title">—</h3>
+          <p class="insight-body">—</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ================== CONTEXT ================== -->
+    <section class="block container" id="context">
+      <div class="section-head reveal">
+        <div class="section-kicker">맥락</div>
+        <h2 class="section-title">언론 보도 · 커뮤니티 반응</h2>
+        <p class="section-sub">수치 해석의 보조 맥락. 원문 인용 보존, 요약·의역 금지.</p>
+      </div>
+
+      <div class="context-grid">
+        <div class="context-card reveal" data-key="context_press">
+          <h3>언론 보도</h3>
+          <div data-bind="press.items">
+            <blockquote class="quote">원문 인용 대기 중. <cite>— 매체, 날짜</cite></blockquote>
+          </div>
+        </div>
+        <div class="context-card reveal" data-key="context_community">
+          <h3>커뮤니티 반응</h3>
+          <div data-bind="community.items">
+            <blockquote class="quote">원문 인용 대기 중. 대표성 보장 없음(표본 편향 가능). <cite>— 커뮤니티, 날짜</cite></blockquote>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================== LIMITATIONS ================== -->
+    <section class="block container" id="limitations">
+      <div class="section-head reveal">
+        <div class="section-kicker">데이터 한계</div>
+        <h2 class="section-title">해석 시 유의사항</h2>
+      </div>
+      <div class="limit-list" data-key="data_limitations">
+        <div class="limit-item">공시 시점과 실제 보유 시점 간 시차. 상위 10종목만 공시되는 경우 하위 구성 추정 불가.</div>
+        <div class="limit-item">커뮤니티 반응은 표본 편향이 크므로 해석의 보조 근거로만 사용.</div>
+        <div class="limit-item">레버리지·인버스 ETF는 초기 설정에서 제외(운용 목적 상이).</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-row">
+      <div>
+        <div>© 2026 KOSDAQ ETF Report · 기준일 <span data-key="footer_date">2026-04-14</span></div>
+        <div style="margin-top: 6px;">본 자료는 투자 권유가 아닌 정보 제공 목적이며, 매매 판단은 투자자 본인의 책임입니다.</div>
+      </div>
+      <div>
+        <a href="./report.pdf">PDF 다운로드</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // ===== Theme toggle =====
+    const themeBtn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    const saved = localStorage.getItem('theme');
+    if (saved) html.setAttribute('data-theme', saved);
+    themeBtn.addEventListener('click', () => {
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      window.__rebuildCharts && window.__rebuildCharts();
+    });
+
+    // ===== Reveal on scroll =====
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('in'), Math.min(i * 40, 160));
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // ===== ETF tabs =====
+    const tablist = document.getElementById('etf-tablist');
+    tablist?.addEventListener('click', (ev) => {
+      const btn = ev.target.closest('[role="tab"]');
+      if (!btn) return;
+      tablist.querySelectorAll('[role="tab"]').forEach(b => b.setAttribute('aria-selected', b === btn ? 'true' : 'false'));
+      const etfKey = btn.dataset.etf;
+      document.dispatchEvent(new CustomEvent('etf:change', { detail: { etfKey } }));
+    });
+
+    // ===== Particle background =====
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!prefersReduced) {
+      const canvas = document.getElementById('bg-canvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [], W = 0, H = 0, DPR = Math.min(window.devicePixelRatio || 1, 2);
+      const N = () => (window.innerWidth < 768 ? 40 : 75);
+      const LINK = 140;
+
+      function resize() {
+        W = innerWidth; H = innerHeight;
+        canvas.width = W * DPR; canvas.height = H * DPR;
+        canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      }
+      class P {
+        constructor() { this.reset(true); }
+        reset(spawnInView) {
+          this.x = Math.random() * W;
+          this.y = Math.random() * H;
+          this.vx = (Math.random() - 0.5) * 0.3;
+          this.vy = (Math.random() - 0.5) * 0.3;
+          this.r = 1 + Math.random() * 1.4;
+        }
+        step() {
+          this.x += this.vx; this.y += this.vy;
+          if (this.x < 0 || this.x > W) this.vx *= -1;
+          if (this.y < 0 || this.y > H) this.vy *= -1;
+        }
+      }
+      function init() { resize(); particles = Array.from({ length: N() }, () => new P()); }
+      let mouseX = -9999, mouseY = -9999;
+      window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+      window.addEventListener('mouseout', () => { mouseX = -9999; mouseY = -9999; });
+      window.addEventListener('resize', init, { passive: true });
+
+      function frame() {
+        ctx.clearRect(0, 0, W, H);
+        for (const p of particles) p.step();
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const a = particles[i], b = particles[j];
+            const dx = a.x - b.x, dy = a.y - b.y;
+            const d = Math.hypot(dx, dy);
+            if (d < LINK) {
+              ctx.strokeStyle = 'rgba(79,140,255,' + (0.14 * (1 - d / LINK)).toFixed(3) + ')';
+              ctx.lineWidth = 1;
+              ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+            }
+          }
+          // mouse link
+          const p = particles[i];
+          const mx = p.x - mouseX, my = p.y - mouseY, md = Math.hypot(mx, my);
+          if (md < 180) {
+            ctx.strokeStyle = 'rgba(126,232,207,' + (0.3 * (1 - md / 180)).toFixed(3) + ')';
+            ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(mouseX, mouseY); ctx.stroke();
+          }
+        }
+        for (const p of particles) {
+          ctx.fillStyle = 'rgba(126,232,207,0.55)';
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+        }
+        requestAnimationFrame(frame);
+      }
+      init(); frame();
+    }
+
+    // ===== Data binding scaffold =====
+    // 데이터 도착 시 아래 훅이 호출된다: bindReport(data)
+    //   data = { kpi, etf_profiles, aum_compare, top10_compare, timeseries_weights,
+    //            inout_distribution, concentration_hhi, movers_ranking,
+    //            holdings_grid, insights, press, community, data_limitations, sources }
+    window.bindReport = function (data) {
+      // TODO: data-analyst 산출물 수신 시 실제 바인딩 로직 추가
+      //   - [data-bind="kpi.total_aum"] 등 data-bind 속성 기반 치환
+      //   - [data-key="*"] 섹션 선택해 차트 인스턴스 초기화 (ECharts)
+      //   - holdings-grid 템플릿 렌더링
+      //   - caption 치환
+      console.info('[report] bindReport called — binding not yet implemented', data);
+    };
+
+    // ECharts 공용 테마 헬퍼 (데이터 도착 후 사용)
+    window.__chartThemeTokens = function () {
+      const cs = getComputedStyle(document.documentElement);
+      return {
+        bg: cs.getPropertyValue('--bg').trim(),
+        surface: cs.getPropertyValue('--surface').trim(),
+        text: cs.getPropertyValue('--text').trim(),
+        textSoft: cs.getPropertyValue('--text-soft').trim(),
+        etf1: cs.getPropertyValue('--etf1').trim(),
+        etf2: cs.getPropertyValue('--etf2').trim(),
+        etf3: cs.getPropertyValue('--etf3').trim(),
+        catIn: cs.getPropertyValue('--cat-in').trim(),
+        catOut: cs.getPropertyValue('--cat-out').trim(),
+        catHold: cs.getPropertyValue('--cat-hold').trim(),
+      };
+    };
+    window.__rebuildCharts = function () {
+      // data-analyst 바인딩 후 구현: 테마 토글 시 chart.setOption(themedOption) 재호출
+    };
+
+    // CDN 실패 폴백 감지
+    window.addEventListener('load', () => {
+      if (typeof window.echarts === 'undefined') {
+        document.querySelectorAll('[data-chart]').forEach(el => {
+          el.innerHTML = '<div style="padding:20px;color:var(--text-soft);font-size:13px;">차트 라이브러리 로드 실패 · 네트워크 오프라인 상태에서 정적 렌더만 표시됩니다.</div>';
+        });
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

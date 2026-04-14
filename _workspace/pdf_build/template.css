@@ -1,0 +1,138 @@
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 400;
+  src: url('fonts/Pretendard-Regular.subset.woff2') format('woff2');
+  font-display: block;
+}
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  src: url('fonts/Pretendard-SemiBold.woff2') format('woff2');
+  font-display: block;
+}
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 700;
+  src: url('fonts/Pretendard-Bold.woff2') format('woff2');
+  font-display: block;
+}
+
+@page { size: A4; margin: 18mm 18mm 20mm 18mm; }
+
+:root {
+  /* Final agreed palette v0.2.0 — PDF = light only */
+  --navy: #0B3D91;
+  --primary: #4F8CFF;
+  --mint: #7EE8CF;
+  --amber: #F5A524;
+  --emerald: #10B981;
+  --coral: #FF6B6B;
+  --neutral: #9CA3AF;
+  --ink: #0F172A;
+  --muted: #64748B;
+  --line: #E5E7EB;
+  --row-alt: #F8FAFC;
+  /* token: pdf_print.table_header_bg/text */
+  --table-head-bg: #0B3D91;
+  --table-head-text: #FFFFFF;
+  --etf1: #4F8CFF;
+  --etf2: #7EE8CF;
+  --etf3: #F5A524;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  font-family: 'Pretendard', -apple-system, 'Apple SD Gothic Neo', sans-serif;
+  color: var(--ink);
+  font-size: 10.5pt;
+  line-height: 1.55;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 { font-size: 22pt; font-weight: 700; color: var(--navy); letter-spacing: -0.02em; margin: 0 0 8pt 0; }
+h2 { font-size: 16pt; font-weight: 600; color: var(--navy); margin: 0 0 6pt 0; border-bottom: 1.5pt solid var(--navy); padding-bottom: 3pt; }
+h3 { font-size: 12.5pt; font-weight: 600; color: var(--ink); margin: 10pt 0 4pt 0; }
+h4 { font-size: 10.5pt; font-weight: 600; color: var(--navy); margin: 8pt 0 3pt 0; }
+p { margin: 0 0 6pt 0; }
+small, .caption { font-size: 8.5pt; color: var(--muted); }
+
+.page { page-break-after: always; padding: 0; }
+.page:last-of-type { page-break-after: auto; }
+.section { page-break-inside: avoid; margin-bottom: 10pt; }
+
+/* Cover */
+.cover {
+  height: 257mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  padding: 20mm 0;
+}
+.cover .brand { font-size: 9pt; letter-spacing: 0.3em; color: var(--muted); text-transform: uppercase; }
+.cover .title { font-size: 32pt; font-weight: 700; color: var(--navy); line-height: 1.15; letter-spacing: -0.03em; }
+.cover .subtitle { font-size: 14pt; color: var(--muted); margin-top: 6pt; font-weight: 400; }
+.cover .accent-bar { width: 40mm; height: 4pt; background: linear-gradient(90deg, var(--navy) 0%, var(--primary) 55%, var(--mint) 100%); margin: 12pt 0; border-radius: 2pt; }
+.cover .meta { font-size: 10pt; color: var(--muted); line-height: 1.8; }
+.cover .meta strong { color: var(--ink); font-weight: 600; }
+
+/* Executive summary */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8pt; margin: 8pt 0; }
+.kpi { border: 1pt solid var(--line); border-radius: 4pt; padding: 8pt 10pt; background: #FAFBFF; }
+.kpi .label { font-size: 8.5pt; color: var(--muted); }
+.kpi .value { font-size: 16pt; font-weight: 700; color: var(--navy); letter-spacing: -0.02em; }
+.kpi .delta { font-size: 8.5pt; font-weight: 600; }
+.delta.up { color: var(--emerald); }
+.delta.down { color: var(--coral); }
+
+.summary-lead { font-size: 11pt; line-height: 1.7; color: var(--ink); padding: 10pt 12pt; background: #F7F9FD; border-left: 3pt solid var(--navy); margin: 10pt 0; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; font-size: 9.5pt; margin: 6pt 0; }
+thead th { background: var(--table-head-bg); color: var(--table-head-text); font-weight: 600; text-align: left; padding: 5pt 7pt; border-bottom: 1pt solid var(--line); }
+tbody td { padding: 4pt 7pt; border-bottom: 0.5pt solid var(--line); }
+tbody tr:nth-child(even) { background: var(--row-alt); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td.neg { color: var(--coral); }
+td.pos { color: var(--emerald); }
+td.hold { color: var(--neutral); }
+
+/* Chart containers */
+.chart { width: 100%; height: 78mm; margin: 4pt 0; }
+.chart-wide { width: 100%; height: 95mm; }
+.chart-caption { font-size: 8.5pt; color: var(--muted); margin-top: 2pt; text-align: right; }
+
+/* ETF profile card */
+.profile-head { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1pt solid var(--line); padding-bottom: 4pt; margin-bottom: 6pt; }
+.profile-head .ticker { font-size: 11pt; color: var(--muted); font-family: 'SF Mono', monospace; }
+.profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8pt; }
+.fact-list { font-size: 9.5pt; }
+.fact-list dt { color: var(--muted); font-size: 8.5pt; margin-top: 3pt; }
+.fact-list dd { margin: 0 0 3pt 0; font-weight: 500; }
+
+/* ETF color accents */
+.etf-accent-1 { border-top: 3pt solid var(--etf1); }
+.etf-accent-2 { border-top: 3pt solid var(--etf2); }
+.etf-accent-3 { border-top: 3pt solid var(--etf3); }
+
+/* Insights */
+.insight { border-left: 3pt solid var(--primary); padding: 6pt 10pt; margin: 6pt 0; background: #FAFBFF; page-break-inside: avoid; }
+.insight h4 { margin-top: 0; color: var(--navy); }
+.insight.risk { border-left-color: var(--coral); background: #FEF5F5; }
+.insight.risk h4 { color: var(--coral); }
+
+/* Disclaimer */
+.disclaimer { font-size: 8.5pt; color: var(--muted); padding: 8pt 10pt; background: var(--row-alt); border-radius: 3pt; line-height: 1.6; }
+
+/* Tag badges */
+.tag { display: inline-block; font-size: 8pt; padding: 1pt 6pt; border-radius: 10pt; background: #EEF4FF; color: var(--navy); margin-right: 3pt; }
+.tag.mint { background: #E7FBF4; color: #0A8A6B; }
+.tag.emerald { background: #E7F8F1; color: #047857; }
+.tag.amber { background: #FEF3E0; color: #A6650A; }
+.tag.coral { background: #FEE7E7; color: #C23B3B; }
+.tag.neutral { background: #F1F5F9; color: #64748B; }
+
+/* Footer meta */
+.src-note { font-size: 8pt; color: var(--muted); margin-top: 3pt; }

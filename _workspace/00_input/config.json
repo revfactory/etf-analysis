@@ -1,0 +1,16 @@
+{
+  "ranking_basis": "AUM",
+  "top_n": 3,
+  "exclude_leverage_inverse": true,
+  "universe": "KOSDAQ",
+  "snapshot_dates": {
+    "latest": "2026-04-14",
+    "m3": "2026-01-14",
+    "m6": "2025-10-14"
+  },
+  "language": "ko",
+  "deliverables": ["report.pdf", "report.html"],
+  "context_channels": ["press", "community"],
+  "report_date": "2026-04-14",
+  "notes": "초기 실행. 기본 설정: AUM 순위 · 3개 시점 비중 시계열 · 한국어 리포트"
+}

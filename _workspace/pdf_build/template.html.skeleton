@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>코스닥 ETF 포트폴리오 리포트</title>
+<link rel="stylesheet" href="template.css" />
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+
+<!-- PAGE 1: COVER -->
+<section class="page cover">
+  <div>
+    <div class="brand">KOSDAQ ETF PORTFOLIO REPORT</div>
+    <div class="accent-bar"></div>
+    <h1 class="title">코스닥 ETF<br/>포트폴리오 분석</h1>
+    <div class="subtitle">상위 3개 펀드 피투자사 구성과 비중 변화 시계열</div>
+  </div>
+  <div class="meta">
+    <strong>발행일</strong> 2026-04-14<br/>
+    <strong>데이터 기준일</strong> 2026-04-14 (현재) · 2026-01-14 (3M) · 2025-10-14 (6M)<br/>
+    <strong>대상 유니버스</strong> KOSDAQ · AUM 상위 3종 (레버리지/인버스 제외)<br/>
+    <strong>작성</strong> kosdaq-etf-team (pdf-author)
+  </div>
+</section>
+
+<!-- PAGE 2: EXECUTIVE SUMMARY -->
+<section class="page">
+  <h2>Executive Summary</h2>
+  <!-- KPI_GRID_PLACEHOLDER -->
+  <!-- SUMMARY_LEAD_PLACEHOLDER -->
+  <!-- KEY_FINDINGS_PLACEHOLDER -->
+  <p class="src-note">자료: 금융투자협회, KRX, 운용사 공시 / 기준일: 2026-04-14</p>
+</section>
+
+<!-- PAGE 3: MARKET OVERVIEW -->
+<section class="page">
+  <h2>시장 개관</h2>
+  <!-- MARKET_OVERVIEW_PLACEHOLDER -->
+  <div id="chart-overview" class="chart-wide"></div>
+  <p class="chart-caption">자료: KRX / 기준일: 2026-04-14</p>
+</section>
+
+<!-- PAGE 4-6: ETF PROFILES x3 -->
+<!-- ETF_PROFILES_PLACEHOLDER -->
+
+<!-- PAGE 7-8: HOLDINGS CHANGE -->
+<section class="page">
+  <h2>종목 비중 변화 분석</h2>
+  <!-- CHANGE_TABLE_PLACEHOLDER -->
+  <div id="chart-timeseries" class="chart-wide"></div>
+  <p class="chart-caption">자료: 운용사 공시 / 기준일: 2026-04-14</p>
+</section>
+
+<!-- PAGE 9: COMMON vs UNIQUE -->
+<section class="page">
+  <h2>공통 편입 vs 단독 편입</h2>
+  <!-- INTERSECTION_PLACEHOLDER -->
+</section>
+
+<!-- PAGE 10: INSIGHTS & RISKS -->
+<section class="page">
+  <h2>인사이트 & 리스크</h2>
+  <!-- INSIGHTS_PLACEHOLDER -->
+</section>
+
+<!-- APPENDIX -->
+<section class="page">
+  <h2>부록 A. 전체 종목 비중 표</h2>
+  <!-- FULL_TABLE_PLACEHOLDER -->
+</section>
+
+<section class="page">
+  <h2>부록 B. 출처 및 면책</h2>
+  <!-- SOURCES_PLACEHOLDER -->
+  <h3>면책 조항</h3>
+  <div class="disclaimer">
+    본 보고서는 정보 제공을 목적으로 작성되었으며, 투자 자문이나 종목 추천이 아닙니다.
+    수록된 데이터는 기재된 기준일의 공시 자료에 근거하며, 이후 변동될 수 있습니다.
+    투자 결정은 본인의 판단과 책임하에 이루어져야 합니다.
+  </div>
+</section>
+
+<script>
+// ECharts 기본 옵션 — data-analyst의 02_charts_spec.json 으로 주입 예정
+window.__PALETTE__ = {
+  navy: '#0B3D91', primary: '#4F8CFF', mint: '#7EE8CF', amber: '#F5A524',
+  emerald: '#10B981', coral: '#FF6B6B', neutral: '#9CA3AF',
+  ink: '#0F172A', muted: '#64748B', line: '#E5E7EB'
+};
+window.__ETF_COLORS__ = ['#4F8CFF', '#7EE8CF', '#F5A524'];
+window.__CATEGORY_COLORS__ = {
+  inclusion: '#10B981', exclusion: '#FF6B6B',
+  increase: '#10B981', decrease: '#FF6B6B',
+  hold: '#9CA3AF'
+};
+/* chart keys aligned with 98_design_tokens.json v0.2.0 */
+window.__CHART_TITLES__ = {
+  aum_compare: '코스닥 ETF Top 3 AUM 비교',
+  top10_compare: 'ETF별 상위 10종목 비중 비교 (기준일: 2026-04-14)',
+  timeseries_weights: '주요 종목 비중 시계열 (2025-10-14 ~ 2026-04-14)',
+  inout_distribution: '편입/제외/증액/축소 분포',
+  concentration_hhi: '섹터 집중도 (HHI)',
+  movers_ranking: '상위 종목 증액/축소 랭킹'
+};
+window.__CHART_TYPES__ = {
+  aum_compare: 'bar',
+  top10_compare: 'horizontalBar',
+  timeseries_weights: 'line',
+  inout_distribution: 'divergingBar',
+  concentration_hhi: 'doughnut',
+  movers_ranking: 'bullet'
+};
+window.__CAPTION_TEMPLATE__ = '자료: {source}, 기준일: {date}';
+window.__SNAPSHOT_DATES__ = { latest: '2026-04-14', m3: '2026-01-14', m6: '2025-10-14' };
+// CHART_SCRIPTS_PLACEHOLDER
+</script>
+</body>
+</html>

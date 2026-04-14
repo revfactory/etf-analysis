@@ -1,0 +1,129 @@
+{
+  "meta": {
+    "version": "0.2.0",
+    "last_updated": "2026-04-14",
+    "status": "확정 (pdf-author ↔ web-designer 합의). 다크=웹 단독 / 라이트=PDF 고정.",
+    "owners": ["web-designer", "pdf-author"],
+    "applies_to": ["report.html", "report.pdf"]
+  },
+  "palette": {
+    "brand": {
+      "deep_navy": "#0B3D91",
+      "primary_blue": "#4F8CFF",
+      "emerald": "#10B981",
+      "amber": "#F5A524",
+      "mint": "#7EE8CF",
+      "coral": "#FF6B6B"
+    },
+    "neutral": {
+      "text_primary": "#0F172A",
+      "text_secondary": "#64748B",
+      "divider": "#E5E7EB",
+      "mint_accent": "#7EE8CF"
+    },
+    "web_dark": {
+      "bg": "#0B0F1A",
+      "surface": "#111827",
+      "surface_alt": "#1F2937",
+      "border": "rgba(255,255,255,0.08)",
+      "text_primary": "#E5E7EB",
+      "text_secondary": "#9CA3AF",
+      "heading_accent": "#4F8CFF"
+    },
+    "web_light": {
+      "bg": "#FAFAFB",
+      "surface": "#FFFFFF",
+      "surface_alt": "#F3F4F6",
+      "border": "#E5E7EB",
+      "text_primary": "#0F172A",
+      "text_secondary": "#64748B",
+      "heading_accent": "#0B3D91"
+    },
+    "pdf_print": {
+      "bg": "#FFFFFF",
+      "heading": "#0B3D91",
+      "text": "#1F2937",
+      "caption": "#6B7280",
+      "table_header_bg": "#0B3D91",
+      "table_header_text": "#FFFFFF",
+      "table_row_alt": "#F8FAFC"
+    }
+  },
+  "etf_series": {
+    "ETF1": "#4F8CFF",
+    "ETF2": "#7EE8CF",
+    "ETF3": "#F5A524"
+  },
+  "category_colors": {
+    "신규편입": "#10B981",
+    "제외": "#FF6B6B",
+    "증액": "#10B981",
+    "증액_subtle": "rgba(16,185,129,0.55)",
+    "축소": "#FF6B6B",
+    "축소_subtle": "rgba(255,107,107,0.55)",
+    "유지": "#9CA3AF"
+  },
+  "typography": {
+    "font_korean": "Pretendard Variable",
+    "font_numeric": "Pretendard Variable, Inter",
+    "scale_px": [12, 14, 16, 20, 28, 40, 56],
+    "heading_weight": 700,
+    "body_weight": 400
+  },
+  "chart_titles": {
+    "aum_compare": "코스닥 ETF Top 3 AUM 비교",
+    "top10_compare": "ETF별 상위 10종목 비중 비교 (기준일: 2026-04-14)",
+    "timeseries_weights": "주요 종목 비중 시계열 (2025-10-14 ~ 2026-04-14)",
+    "inout_distribution": "편입/제외/증액/축소 분포",
+    "concentration_hhi": "섹터 집중도 (HHI)",
+    "movers_ranking": "상위 종목 증액/축소 랭킹"
+  },
+  "chart_types": {
+    "aum_compare": "bar",
+    "top10_compare": "horizontalBar",
+    "timeseries_weights": "line",
+    "inout_distribution": "divergingBar",
+    "concentration_hhi": "doughnut",
+    "movers_ranking": "bullet"
+  },
+  "caption_template": "자료: {source}, 기준일: {date}",
+  "snapshot_dates": {
+    "latest": "2026-04-14",
+    "m3": "2026-01-14",
+    "m6": "2025-10-14"
+  },
+  "motion": {
+    "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
+    "duration_ms": {
+      "fast": 150,
+      "base": 260,
+      "slow": 400
+    },
+    "reveal_offset_px": 16,
+    "particle_count_desktop": 75,
+    "particle_count_mobile": 40,
+    "particle_link_distance": 140
+  },
+  "breakpoints": {
+    "xs": 375,
+    "sm": 640,
+    "md": 768,
+    "lg": 1024,
+    "xl": 1280
+  },
+  "chart_data_keys": {
+    "kpi_hero": "kpi_hero",
+    "etf_profiles": "etf_profiles",
+    "aum_compare": "aum_compare",
+    "top10_compare": "top10_compare",
+    "timeseries_weights": "timeseries_weights",
+    "inout_distribution": "inout_distribution",
+    "concentration_hhi": "concentration_hhi",
+    "movers_ranking": "movers_ranking",
+    "holdings_grid": "holdings_grid",
+    "insights": "insights",
+    "data_limitations": "data_limitations",
+    "context_press": "context_press",
+    "context_community": "context_community"
+  }
+}
