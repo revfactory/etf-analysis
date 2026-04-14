@@ -177,6 +177,10 @@
     /* FOOTER */
     footer { border-top: 1px solid var(--border); margin-top: 48px; padding: 32px 0 56px; color: var(--text-soft); font-size: 13px; }
     .footer-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .disclaimer-block { margin-top: 24px; padding: 22px 24px; border: 1px solid var(--border); border-left: 3px solid var(--brand-amber); border-radius: 10px; background: color-mix(in srgb, var(--brand-amber) 5%, transparent); }
+    .disclaimer-block h3 { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brand-amber); font-weight: 700; margin-bottom: 10px; }
+    .disclaimer-block p { font-size: 13px; line-height: 1.75; color: var(--text-soft); }
+    .disclaimer-block .byline { margin-top: 12px; font-size: 11px; color: var(--text-soft); opacity: 0.8; }
 
     /* REVEAL */
     .reveal { opacity: 0; transform: translateY(16px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); }
@@ -420,7 +424,14 @@
   </main>
 
   <footer>
-    <div class="container footer-row">
+    <div class="container">
+      <div class="disclaimer-block" role="note" aria-label="면책 조항">
+        <h3>면책 조항</h3>
+        <p>본 보고서는 정보 제공을 목적으로 작성되었으며, 투자 자문이나 종목 추천이 아닙니다. 수록된 데이터는 기재된 기준일의 공시 자료에 근거하며, 이후 변동될 수 있습니다. ETF 투자는 원금 손실의 위험이 있으며, 개별 종목 비중·지수 구성·보수율은 운용사 공시에 따라 갱신됩니다. 투자 결정은 본인의 판단과 책임하에 이루어져야 합니다.</p>
+        <div class="byline">작성: kosdaq-etf-team / pdf-author · 발행일 2026-04-14</div>
+      </div>
+    </div>
+    <div class="container footer-row" style="margin-top: 24px;">
       <div>
         <div>© 2026 KOSDAQ ETF Report · 기준일 2026-04-14</div>
         <div style="margin-top: 6px;">본 자료는 투자 권유가 아닌 정보 제공 목적이며, 매매 판단은 투자자 본인의 책임입니다.</div>

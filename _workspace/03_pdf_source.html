@@ -525,9 +525,20 @@
   // AUM bar
   const cAum = echarts.init(document.getElementById('chart-aum'), null, { renderer: 'svg' });
   cAum.setOption({
-    grid: { left: 80, right: 30, top: 20, bottom: 30 },
+    grid: { left: 90, right: 140, top: 20, bottom: 40 },
     tooltip: { trigger: 'axis' },
-    xAxis: { type: 'value', name: 'AUM (억원)', nameTextStyle: commonText, min: 0, max: 7000, ...axisStyle },
+    xAxis: {
+      type: 'value', name: 'AUM (억원)', nameTextStyle: commonText, nameGap: 20,
+      min: 0, max: 7000, interval: 1000,
+      axisLine: { lineStyle: { color: P.line } },
+      axisTick: { lineStyle: { color: P.line } },
+      axisLabel: {
+        color: P.muted, fontSize: 9, fontFamily: 'Pretendard, sans-serif',
+        interval: 0, hideOverlap: false, showMinLabel: true, showMaxLabel: true,
+        formatter: v => v.toLocaleString('ko-KR')
+      },
+      splitLine: { lineStyle: { color: P.line, opacity: 0.6 } }
+    },
     yAxis: { type: 'category', data: ['RISE 코스닥150', 'TIGER 코스닥150', 'KODEX 코스닥150'], ...axisStyle, axisLabel: { ...axisStyle.axisLabel, color: P.ink } },
     series: [{
       type: 'bar', data: [
@@ -535,7 +546,7 @@
         { value: 2115.1, itemStyle: { color: ETF_COLORS[1] } },
         { value: 6517.6, itemStyle: { color: ETF_COLORS[0] } }
       ],
-      label: { show: true, position: 'right', formatter: '{c} 억원', color: P.ink, fontFamily: 'Pretendard, sans-serif', fontSize: 10 },
+      label: { show: true, position: 'right', formatter: '{c}', color: P.ink, fontFamily: 'Pretendard, sans-serif', fontSize: 10 },
       barWidth: 22
     }]
   });
