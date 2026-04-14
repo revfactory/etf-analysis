@@ -17,3 +17,4 @@
 |------|----------|------|------|
 | 2026-04-14 | 초기 구성 (5 agents + 5 skills + orchestrator) | 전체 | 사용자 요청: 코스닥 ETF 상위 3개 피투자사/비중 변화 분석 및 PDF+인터랙티브 웹 리포트 생성 |
 | 2026-04-14 | 맥락 채널 추가: 언론 보도·커뮤니티 반응 수집. 역할 5번 신설, 작업 원칙에 인용 보존/요약 금지/대표성 경고 추가. 출력에 `01_press_*.md`, `01_community_*.md` 추가. data-analyst에게 가설 제시용임을 명시하는 안내 프로토콜 추가. frontmatter description 갱신. | agents/etf-researcher.md | 1on1 — 포트폴리오 수치 변화에 맥락(뉴스·투자자 반응)을 붙여 분석팀의 해석을 돕기 위함 |
+| 2026-04-14 | 매일 08:00 KST 자동 갱신 GitHub Action 추가 (`.github/workflows/daily-report.yml`). 스케줄·수동 트리거 지원, Claude Code 헤드리스로 `kosdaq-etf-report` 스킬 실행, 결과 자동 커밋·푸시. 필요 secret: `ANTHROPIC_API_KEY`. | `.github/workflows/` | 사용자 요청: 매일 아침 8시 최신 포트폴리오·비중으로 리포트 재생성 자동화 |

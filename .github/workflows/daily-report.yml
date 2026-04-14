@@ -1,0 +1,111 @@
+name: Daily ETF Report
+
+on:
+  schedule:
+    # 08:00 KST = 23:00 UTC (전일)
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: '수동 실행 시 Claude에게 전달할 지시 (생략 시 일일 갱신 기본 프롬프트)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-etf-report
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Install Playwright dependencies
+        working-directory: _workspace/pdf_build
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Set run date (KST)
+        id: date
+        run: |
+          echo "kst=$(TZ=Asia/Seoul date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+          echo "kst_long=$(TZ=Asia/Seoul date +'%Y-%m-%d %H:%M KST')" >> "$GITHUB_OUTPUT"
+
+      - name: Preserve previous workspace
+        run: |
+          if [ -d _workspace ]; then
+            ts=$(date +%Y%m%d_%H%M%S)
+            cp -a _workspace "_workspace_${ts}"
+            echo "이전 워크스페이스 보존: _workspace_${ts}"
+          fi
+
+      - name: Run harness via Claude Code
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          KST_DATE: ${{ steps.date.outputs.kst }}
+          KST_LONG: ${{ steps.date.outputs.kst_long }}
+        run: |
+          USER_PROMPT="${{ github.event.inputs.prompt }}"
+          if [ -z "$USER_PROMPT" ]; then
+            USER_PROMPT="오늘(${KST_LONG}) 기준으로 코스닥 ETF 상위 3개 포트폴리오를 새로 조사·분석하여 report.pdf와 index.html을 갱신하라. 기존 _workspace/ 산출물은 참고 자료로 활용하되, 최신 AUM 순위·보유 종목·비중을 웹에서 새로 수집하여 ${KST_DATE} 기준 리포트로 재생성한다. kosdaq-etf-report 스킬을 사용하라."
+          fi
+          echo "=== 프롬프트 ==="
+          echo "$USER_PROMPT"
+          echo "================"
+          claude \
+            --print \
+            --dangerously-skip-permissions \
+            --model claude-opus-4-6 \
+            "$USER_PROMPT"
+
+      - name: Verify outputs
+        run: |
+          test -s report.pdf || (echo "report.pdf 생성 실패" && exit 1)
+          test -s index.html || (echo "index.html 생성 실패" && exit 1)
+          echo "report.pdf: $(stat -c %s report.pdf) bytes"
+          echo "index.html: $(stat -c %s index.html) bytes"
+
+      - name: Commit and push
+        env:
+          KST_DATE: ${{ steps.date.outputs.kst }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # 이전 워크스페이스 백업은 커밋하지 않음 (로컬 러너 캐시에만)
+          rm -rf _workspace_20*
+          git add report.pdf index.html _workspace/
+          if git diff --cached --quiet; then
+            echo "변경 없음 — 커밋 건너뜀"
+          else
+            git commit -m "daily: ${KST_DATE} 코스닥 ETF 리포트 자동 갱신"
+            git push origin HEAD:main
+          fi
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: etf-report-${{ steps.date.outputs.kst }}
+          path: |
+            report.pdf
+            index.html
+            _workspace/
+          retention-days: 30
